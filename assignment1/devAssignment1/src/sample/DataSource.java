@@ -14,13 +14,14 @@ public class DataSource {
         ObservableList<TestFile> data = FXCollections.observableArrayList();
 
         //read treemap file here and add to data
-        Map<String,Integer> wordCounts;
-        Map<String,Double> probCounts;
-        //public DataSource() {
-            wordCounts = new TreeMap<>();
-        //}
+        Map<String,Double> hamList;
+        Map<String,Double> spamList;
+        Map<String,Double> totalList;
 
-        probCounts = new TreeMap<>();
+        hamList = new TreeMap<>();
+        spamList = new TreeMap<>();
+        totalList = new TreeMap<>();
+
 
         //Read files and put their names into an array, this is the first row of TestFile
         //Read file directory, ham or spam, into an array  this is the second row of TestFile
@@ -38,32 +39,137 @@ public class DataSource {
         //read files, find words, match word to its probability in Treemap, sum all probabilities, get file probability, do this for all files.
 
         //replace this with the reading of the file and counting the words
-        wordCounts.put("string1", 1);
-        wordCounts.put("string2", 5);
-        wordCounts.put("string3", 10);
 
-        Set<String> keys = wordCounts.keySet();
+
+        totalList.put("apple", 1.0);
+        totalList.put("bar", 5.0);
+        totalList.put("cat", 10.0);
+        totalList.put("dog", 15.0);
+        totalList.put("ear", 55.0);
+        totalList.put("fire", 105.0);
+
+
+        hamList.put("apple", 1.0);
+        hamList.put("cat", 4.0);
+        hamList.put("dog", 6.0);
+        hamList.put("ear", 30.0);
+
+        spamList.put("bar", 5.0);
+        spamList.put("cat", 6.0);
+        spamList.put("dog", 8.0);
+        spamList.put("ear", 25.0);
+
+        Set<String> keys = totalList.keySet();
         Iterator<String> keyIterator = keys.iterator();
 
-        //The array for actualClass, displays Ham or Spam
-        String[] actualclass = new String[100];
-        actualclass[1] = "one";
-        actualclass[2] = "two";
-        actualclass[3] = "three";
 
-        int counter = 0;
+
+
+
+
+        //The array for actualClass, displays Ham or Spam
+//        String[] actualclass = new String[100];
+//        actualclass[1] = "one";
+//        actualclass[2] = "two";
+//        actualclass[3] = "three";
+//        actualclass[4] = "four";
+//        actualclass[5] = "five";
+//        actualclass[6] = "six";
+//
+//        int counter = 0;
+//
+//        while(keyIterator.hasNext()) {
+//            String key = keyIterator.next();
+//            //Count has to be modified to be the spam probability to be entered in the table
+//            int count = wordCounts.get(key);
+//            double probability = count*5;
+//            probCounts.put(key,probability);
+//            counter++;
+//            data.add(new TestFile(key,count, actualclass[counter], "ham"));
+//        }
+
+
+        /////////////////Formula Testing Using PlaceHolder Data//////////////////////
+
+        //Note: I am unsure how I will obtain the number of files containing spam and ham, so for now they will be fixed (100)
+        //Also In order for this formula to work I would also need a list of ALL words
+
+
+
+        Map<String,Double> probInSpamTree;
+        Map<String,Double> probInHamTree;
+        Map<String,Double> probWordIsSpamTree;
+
+        probInSpamTree = new TreeMap<>();
+        probInHamTree = new TreeMap<>();
+        probWordIsSpamTree= new TreeMap<>();
 
         while(keyIterator.hasNext()) {
             String key = keyIterator.next();
-            //Count has to be modified to be the spam probability to be entered in the table
-            int count = wordCounts.get(key);
-            double probability = count*5;
-            probCounts.put(key,probability);
-            counter++;
-            data.add(new TestFile(key,count, actualclass[counter], "ham"));
+            double probInSpam;
+            if (spamList.containsKey(key)) {
+                probInSpam = spamList.get(key) / 100;
+                probInSpamTree.put(key, probInSpam);
+            } else {
+                probInSpamTree.put(key, 0.0);
+            }
+            double probInHam;
+            if (hamList.containsKey(key)) {
+                probInHam = hamList.get(key) / 100;
+                probInHamTree.put(key, probInHam);
+            } else {
+                probInHamTree.put(key, 0.0);
+            }
         }
 
-        System.out.println(probCounts);
+
+
+
+
+        Set<String> spamKeys = probInSpamTree.keySet();
+        Iterator<String> spamIterator = spamKeys.iterator();
+
+        while(spamIterator.hasNext()) {
+            String key = spamIterator.next();
+            //Count has to be modified to be the spam probability to be entered in the table
+            double count = probInSpamTree.get(key);
+            data.add(new TestFile(key,count, "test", "ham"));
+        }
+
+        Set<String> hamKeys = probInHamTree.keySet();
+        Iterator<String> hamIterator = hamKeys.iterator();
+
+        while(hamIterator.hasNext()) {
+            String key = hamIterator.next();
+            //Count has to be modified to be the spam probability to be entered in the table
+            double count = probInHamTree.get(key);
+            data.add(new TestFile(key,count, "test", "ham"));
+        }
+
+        while(hamIterator.hasNext()) {
+            String key = hamIterator.next();
+            //Count has to be modified to be the spam probability to be entered in the table
+            double count = probInHamTree.get(key);
+            data.add(new TestFile("word",5.0, "test", "ham"));
+        }
+
+
+//        while(keyIterator.hasNext()) {
+//            String key = keyIterator.next();
+//            double probInHam = probInHamTree.get(key);
+//            double probInSpam = probInSpamTree.get(key);
+//            double probWordIsSpam = probInSpam/(probInHam + probInSpam);
+//            data.add(new TestFile(key,5.0, "test", "ham"));
+//        }
+
+
+
+
+        //////////////////////////////////////////////////////
+
+
+
+ //System.out.println(probCounts);
         // TestFile ID, Assignments, Midterm, Final exam
         //data.add(new TestFile("string1", 75.0, "string2"));
         //data.add(new TestFile("string3", 70.0, "string4"));
