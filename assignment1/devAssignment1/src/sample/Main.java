@@ -16,6 +16,8 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class Main extends Application {
     private Stage window;
@@ -29,6 +31,30 @@ public class Main extends Application {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setInitialDirectory(new File("."));
         File mainDirectory = directoryChooser.showDialog(primaryStage);
+
+        WordCounter wordCounter = new WordCounter();
+        System.out.println("File: " + mainDirectory);
+
+        try {
+            //checks what folder is the program looking at right now
+            if(mainDirectory.getName().contains("ham")) {
+                wordCounter.processFile(mainDirectory,"ham");
+                //first parameter is for minimum # of appearances the word needs to be shown on list(ie: 2 = print all
+                //values that are appear 2x, ignore all words that appear once)
+                //wordCounter.printWordCounts(2, new File("countOutput.txt"),"ham");
+                System.out.println(wordCounter.trainHamFreq);
+            } else if (mainDirectory.getName().contains("spam")) {
+                wordCounter.processFile(mainDirectory,"spam");
+                //first parameter is for minimum # of appearances the word needs to be shown on list(ie: 2 = print all
+                //values that are appear 2x, ignore all words that appear once)
+                //wordCounter.printWordCounts(2, new File("countOutput.txt"),"spam");
+                System.out.println(wordCounter.trainSpamFreq);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         primaryStage.setTitle("Spam Master 3000");
 
