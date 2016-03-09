@@ -3,22 +3,33 @@ package sample;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+
+import java.io.File;
 
 public class Main extends Application {
     private Stage window;
     private BorderPane layout;
     private TableView<TestFile> table;
+    private TextField accuracyField, precisionField;
+    private double accuracy, precision;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setInitialDirectory(new File("."));
+        File mainDirectory = directoryChooser.showDialog(primaryStage);
+
         primaryStage.setTitle("Spam Master 3000");
 
         table = new TableView<>();
@@ -30,19 +41,25 @@ public class Main extends Application {
         fileColumn.setMinWidth(200);
         fileColumn.setCellValueFactory(new PropertyValueFactory<>("filename"));
 
-        TableColumn<TestFile,Float> actualClassColumn = null;
+        TableColumn<TestFile,Double> actualClassColumn = null;
         actualClassColumn = new TableColumn<>("Actual Class");
         actualClassColumn.setMinWidth(80);
-        actualClassColumn.setCellValueFactory(new PropertyValueFactory<>("spamProbability"));
+        actualClassColumn.setCellValueFactory(new PropertyValueFactory<>("actualClass"));
 
-        TableColumn<TestFile,Float> spamProbabilityColumn = null;
+        TableColumn<TestFile,String> spamProbabilityColumn = null;
         spamProbabilityColumn = new TableColumn<>("Spam Probability");
-        spamProbabilityColumn.setMinWidth(300);
-        spamProbabilityColumn.setCellValueFactory(new PropertyValueFactory<>("actualClass"));
+        spamProbabilityColumn.setMinWidth(200);
+        spamProbabilityColumn.setCellValueFactory(new PropertyValueFactory<>("spamProbability"));
+
+        TableColumn<TestFile,String> categorizationColumn = null;
+        categorizationColumn = new TableColumn<>("Categorization");
+        categorizationColumn.setMinWidth(80);
+        categorizationColumn.setCellValueFactory(new PropertyValueFactory<>("categorization"));
 
         table.getColumns().add(fileColumn);
         table.getColumns().add(actualClassColumn);
         table.getColumns().add(spamProbabilityColumn);
+        table.getColumns().add(categorizationColumn);
 
         /* create an edit form (for the bottom of the user interface) */
         GridPane editArea = new GridPane();
@@ -50,12 +67,29 @@ public class Main extends Application {
         editArea.setVgap(10);
         editArea.setHgap(10);
 
+        //accuracy = number of correct guesses / total number of files;
+        //precision = number of correct guesses / number of spam guesses;
+
+        Label accuracyLabel = new Label("Accuracy:");
+        editArea.add(accuracyLabel, 0, 0);
+        TextField accuracyField = new TextField();
+        accuracyField.setText("calculated accuracy");
+        accuracyField.setPrefWidth(200);
+        editArea.add(accuracyField, 1, 0);
+
+        Label precisionLabel = new Label("Precision:");
+        editArea.add(precisionLabel, 0, 1);
+        TextField precisionField = new TextField();
+        precisionField.setText("calculated precision");
+        precisionField.setPrefWidth(200);
+        editArea.add(precisionField, 1, 1);
+
         /* arrange all components in the main user interface */
         layout = new BorderPane();
         layout.setCenter(table);
         layout.setBottom(editArea);
 
-        Scene scene = new Scene(layout, 600, 600);
+        Scene scene = new Scene(layout, 800, 900);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
