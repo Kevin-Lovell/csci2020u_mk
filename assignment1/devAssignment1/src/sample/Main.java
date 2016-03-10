@@ -18,6 +18,8 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class Main extends Application {
     private Stage window;
@@ -55,6 +57,10 @@ public class Main extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        Map<String,Double> cloned;
+        cloned=(TreeMap)((TreeMap)wordCounter.trainSpamFreq).clone();
+        System.out.println("Cloned map: "+ cloned);
 
         primaryStage.setTitle("Spam Master 3000");
 

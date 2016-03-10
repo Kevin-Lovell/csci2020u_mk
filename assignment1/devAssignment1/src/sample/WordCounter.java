@@ -6,8 +6,8 @@ import java.io.*;
 import java.util.*;
 
 public class WordCounter {
-    Map<String,Integer> trainHamFreq;
-    Map<String,Integer> trainSpamFreq;
+    Map<String,Double> trainHamFreq;
+    Map<String,Double> trainSpamFreq;
 
     public WordCounter() {
         trainHamFreq = new TreeMap<>();
@@ -90,19 +90,19 @@ public class WordCounter {
 
     private void countHam(String word) {
         if (trainHamFreq.containsKey(word)) {
-            int oldCount = trainHamFreq.get(word);
+            double oldCount = trainHamFreq.get(word);
             trainHamFreq.put(word, oldCount+1);
         } else {
-            trainHamFreq.put(word, 1);
+            trainHamFreq.put(word, 1.0);
         }
     }
 
     private void countSpam(String word) {
         if (trainSpamFreq.containsKey(word)) {
-            int oldCount = trainSpamFreq.get(word);
+            double oldCount = trainSpamFreq.get(word);
             trainSpamFreq.put(word, oldCount + 1);
         } else {
-            trainSpamFreq.put(word, 1);
+            trainSpamFreq.put(word, 1.0);
         }
     }
 
@@ -124,7 +124,7 @@ public class WordCounter {
 
                 while(keyIterator.hasNext()) {
                     String key = keyIterator.next();
-                    int count = trainHamFreq.get(key);
+                    double count = trainHamFreq.get(key);
 
                     if (count >= minCount) {
                         //System.out.println(key + ": " + count);
@@ -137,7 +137,7 @@ public class WordCounter {
 
                 while(keyIterator.hasNext()) {
                     String key = keyIterator.next();
-                    int count = trainSpamFreq.get(key);
+                    double count = trainSpamFreq.get(key);
 
                     if (count >= minCount) {
                         //System.out.println(key + ": " + count);
