@@ -34,54 +34,6 @@ public class DataSource {
         spamList = tSpam;
         totalList = new TreeMap<>();
 
-        /*prints ham data from word counter, uncomment hamlist and spamlist for this to work
-        Set<String> keys = hamList.keySet();
-        Iterator<String> keyIterator = keys.iterator();
-
-        while(keyIterator.hasNext()) {
-            String key = keyIterator.next();
-            double count = hamList.get(key);
-
-            if (count >= 2) {
-
-                System.out.println(key + ": " + count);
-            }
-        }
-        System.out.println("data from WordCounter printed from DataSource");
-        */
-
-        //Read files and put their names into an array, this is the first row of TestFile
-        //Read file directory, ham or spam, into an array  this is the second row of TestFile
-        //iterate over wordCounts and calculate the probability for each word, store in treeMap
-        //do this for both ham(W|H) and spam(W|S)
-        //iterate through W|H and W|S together and populate S|W, a new array, with the results,
-        //read through every file, check words and to get their S|W, with that calc n, the S|F
-        //this is the third row of the testFile
-        //the three arrays(fileNames, directories, and probabilities) are printed in the table
-
-        //read files, find words, match word to its probability in Treemap, sum all probabilities, get file probability, do this for all files.
-
-        //replace this with the reading of the file and counting the words
-
-//        totalList.put("apple", 1.0);
-//        totalList.put("bar", 5.0);
-//        totalList.put("cat", 10.0);
-//        totalList.put("dog", 15.0);
-//        totalList.put("ear", 55.0);
-//        totalList.put("fire", 105.0);
-//
-
-
-//        hamList.put("apple", 1.0);
-//        hamList.put("cat", 4.0);
-//        hamList.put("dog", 6.0);
-//        hamList.put("ear", 30.0);
-//
-//        spamList.put("bar", 5.0);
-//        spamList.put("cat", 6.0);
-//        spamList.put("dog", 8.0);
-//        spamList.put("ear", 25.0);
-
         totalList = (TreeMap)((TreeMap)spamList).clone();
 
         Set<String> hamListKeys = hamList.keySet();
@@ -107,7 +59,6 @@ public class DataSource {
 
 
         /////////////////Formula Testing Using PlaceHolder Data//////////////////////
-
         //Note: I am unsure how I will obtain the number of files containing spam and ham, so for now they will be fixed (100)
         //Also In order for this formula to work I would also need a list of ALL words
 
