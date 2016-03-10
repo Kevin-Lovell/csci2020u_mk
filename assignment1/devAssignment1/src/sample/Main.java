@@ -42,16 +42,11 @@ public class Main extends Application {
                 // System.out.println(wordCounter.trainHamFreq);
             } else if (file.getName().contains("spam")) {
                 wordCounter.processFile(file,"spam");
-                //first parameter is for minimum # of appearances the word needs to be shown on list(ie: 2 = print all
-                //values that are appear 2x, ignore all words that appear once)
-                //wordCounter.printWordCounts(2, new File("countOutput.txt"),"spam");
-                //System.out.println(wordCounter.trainSpamFreq);
             }
 
             //rocess all of the files recursively
             for (int i = 0; i < filesInDir.length; i++) {
-                //System.out.println(filesInDir[i]);
-               // System.out.println("hi2");
+
                 processFolder(filesInDir[i], folderFrom, wordCounter);
             }
         }
