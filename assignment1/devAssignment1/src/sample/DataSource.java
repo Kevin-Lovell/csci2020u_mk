@@ -12,6 +12,7 @@ import java.util.TreeMap;
 public class DataSource {
     Map<String,Double> trainHamFreq;
     Map<String,Double> trainSpamFreq;
+    static double finalAccuaracy, finalPrecision;
 
 
     DataSource(Map tHam, Map tSpam) {
@@ -62,27 +63,48 @@ public class DataSource {
 
         //replace this with the reading of the file and counting the words
 
-        totalList.put("apple", 1.0);
-        totalList.put("bar", 5.0);
-        totalList.put("cat", 10.0);
-        totalList.put("dog", 15.0);
-        totalList.put("ear", 55.0);
-        totalList.put("fire", 105.0);
+//        totalList.put("apple", 1.0);
+//        totalList.put("bar", 5.0);
+//        totalList.put("cat", 10.0);
+//        totalList.put("dog", 15.0);
+//        totalList.put("ear", 55.0);
+//        totalList.put("fire", 105.0);
+//
 
 
+//        hamList.put("apple", 1.0);
+//        hamList.put("cat", 4.0);
+//        hamList.put("dog", 6.0);
+//        hamList.put("ear", 30.0);
+//
+//        spamList.put("bar", 5.0);
+//        spamList.put("cat", 6.0);
+//        spamList.put("dog", 8.0);
+//        spamList.put("ear", 25.0);
 
-        hamList.put("apple", 1.0);
-        hamList.put("cat", 4.0);
-        hamList.put("dog", 6.0);
-        hamList.put("ear", 30.0);
+        totalList = (TreeMap)((TreeMap)spamList).clone();
 
-        spamList.put("bar", 5.0);
-        spamList.put("cat", 6.0);
-        spamList.put("dog", 8.0);
-        spamList.put("ear", 25.0);
+        Set<String> hamListKeys = hamList.keySet();
+        Iterator<String> hamListKeyIterator = hamListKeys.iterator();
+
+        //This loop combines both the ham list and spam list into one large list of all words
+        while(hamListKeyIterator.hasNext()) {
+            String key = hamListKeyIterator.next();
+            if (spamList.containsKey(key)){
+                totalList.put(key, hamList.get(key) + spamList.get(key));
+            }else{
+                totalList.put(key, hamList.get(key));
+            }
+        }
 
         Set<String> keys = totalList.keySet();
         Iterator<String> keyIterator = keys.iterator();
+
+        Map<String,Double> totalList2 = totalList;
+
+        Set<String> keys2 = totalList2.keySet();
+        Iterator<String> keyIterator2 = keys2.iterator();
+
 
         /////////////////Formula Testing Using PlaceHolder Data//////////////////////
 
@@ -97,53 +119,37 @@ public class DataSource {
         probInHamTree = new TreeMap<>();
         probWordIsSpamTree= new TreeMap<>();
 
+        //Performing calculations to find the probability a word will appear
+        // in ham and the probability it will appear spam
         while(keyIterator.hasNext()) {
             String key = keyIterator.next();
             double probInSpam;
             if (spamList.containsKey(key)) {
-                probInSpam = spamList.get(key);         //spamList.get(key) is working
+                probInSpam = spamList.get(key) / spamList.size();
                 probInSpamTree.put(key, probInSpam);
             } else {
                 probInSpamTree.put(key, 0.0);
             }
-
             double probInHam;
             if (hamList.containsKey(key)) {
-                probInHam = hamList.get(key);
+                probInHam = hamList.get(key) / hamList.size();
                 probInHamTree.put(key, probInHam);
             } else {
                 probInHamTree.put(key, 0.0);
             }
-
         }
 
-        Set<String> spamKeys = probInSpamTree.keySet();
-        Iterator<String> spamIterator = spamKeys.iterator();
 
-        while(spamIterator.hasNext()) {
-            String key = spamIterator.next();                                                      //naming this key in multiple places could be an issue
-            //Count has to be modified to be the spam probability to be entered in the table
-            double count = probInSpamTree.get(key);
-            data.add(new TestFile(key,count, "test", "spam"));
+        while(keyIterator2.hasNext()) {
+            String key = keyIterator2.next();
+            double probInHam = probInHamTree.get(key);
+            double probInSpam = probInSpamTree.get(key);
+            double probWordIsSpam = probInSpam/(probInHam + probInSpam);
+            data.add(new TestFile(key, probWordIsSpam, "test", "ham"));
         }
 
-        Set<String> hamKeys = probInHamTree.keySet();
-        Iterator<String> hamIterator = hamKeys.iterator();
-
-        while(hamIterator.hasNext()) {
-            String key = hamIterator.next();
-            //Count has to be modified to be the spam probability to be entered in the table
-            double count = probInHamTree.get(key);
-            data.add(new TestFile(key,count, "test", "ham"));
-        }
-
-//        while(keyIterator.hasNext()) {
-//            String key = keyIterator.next();
-//            double probInHam = probInHamTree.get(key);
-//            double probInSpam = probInSpamTree.get(key);
-//            double probWordIsSpam = probInSpam/(probInHam + probInSpam);
-//            data.add(new TestFile(key,5.0, "test", "ham"));
-//        }
+        finalAccuaracy = 1.2345;
+        finalPrecision = 6.7890;
 
 
         return data;

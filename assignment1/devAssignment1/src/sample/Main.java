@@ -120,17 +120,19 @@ public class Main extends Application {
         //accuracy = number of correct guesses / total number of files;
         //precision = number of correct guesses / number of spam guesses;
 
+        DataSource dat = new DataSource(wordCounter.trainHamFreq, wordCounter.trainSpamFreq);
+
         Label accuracyLabel = new Label("Accuracy:");
         editArea.add(accuracyLabel, 0, 0);
         TextField accuracyField = new TextField();
-        accuracyField.setText("calculated accuracy");
+        accuracyField.setText(String.valueOf(dat.finalAccuaracy));
         accuracyField.setPrefWidth(200);
         editArea.add(accuracyField, 1, 0);
 
         Label precisionLabel = new Label("Precision:");
         editArea.add(precisionLabel, 0, 1);
         TextField precisionField = new TextField();
-        precisionField.setText("calculated precision");
+        precisionField.setText(String.valueOf(dat.finalPrecision));
         precisionField.setPrefWidth(200);
         editArea.add(precisionField, 1, 1);
 
