@@ -2,6 +2,7 @@ package sample;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import sun.reflect.generics.tree.Tree;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -9,8 +10,15 @@ import java.util.Set;
 import java.util.TreeMap;
 
 public class DataSource {
+    Map<String,Double> trainHamFreq;
+    Map<String,Double> trainSpamFreq;
 
-    public static ObservableList<TestFile> getAllData() {
+
+    DataSource(Map tHam, Map tSpam) {
+        this.trainHamFreq = tHam;
+        this.trainSpamFreq = tSpam;
+    }
+    public static ObservableList<TestFile> getAllData(TreeMap tHam, TreeMap tSpam) {
         ObservableList<TestFile> data = FXCollections.observableArrayList();
 
         Map<String,Double> hamList;
@@ -19,7 +27,27 @@ public class DataSource {
 
         hamList = new TreeMap<>();
         spamList = new TreeMap<>();
+
+        //uncomment for these to work
+        hamList = tHam;
+        spamList = tSpam;
         totalList = new TreeMap<>();
+
+        /*prints ham data from word counter, uncomment hamlist and spamlist for this to work
+        Set<String> keys = hamList.keySet();
+        Iterator<String> keyIterator = keys.iterator();
+
+        while(keyIterator.hasNext()) {
+            String key = keyIterator.next();
+            double count = hamList.get(key);
+
+            if (count >= 2) {
+
+                System.out.println(key + ": " + count);
+            }
+        }
+        System.out.println("data from WordCounter printed from DataSource");
+        */
 
         //Read files and put their names into an array, this is the first row of TestFile
         //Read file directory, ham or spam, into an array  this is the second row of TestFile
@@ -40,6 +68,7 @@ public class DataSource {
         totalList.put("dog", 15.0);
         totalList.put("ear", 55.0);
         totalList.put("fire", 105.0);
+
 
 
         hamList.put("apple", 1.0);
@@ -77,6 +106,7 @@ public class DataSource {
             } else {
                 probInSpamTree.put(key, 0.0);
             }
+
             double probInHam;
             if (hamList.containsKey(key)) {
                 probInHam = hamList.get(key);
@@ -84,6 +114,7 @@ public class DataSource {
             } else {
                 probInHamTree.put(key, 0.0);
             }
+
         }
 
         Set<String> spamKeys = probInSpamTree.keySet();
@@ -113,6 +144,7 @@ public class DataSource {
 //            double probWordIsSpam = probInSpam/(probInHam + probInSpam);
 //            data.add(new TestFile(key,5.0, "test", "ham"));
 //        }
+
 
         return data;
     }

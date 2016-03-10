@@ -1,17 +1,27 @@
 package sample;
 
 import javafx.stage.Stage;
+import sun.reflect.generics.tree.DoubleSignature;
+import sun.reflect.generics.tree.Tree;
 
 import java.io.*;
 import java.util.*;
 
 public class WordCounter {
-    Map<String,Double> trainHamFreq;
-    Map<String,Double> trainSpamFreq;
+    TreeMap<String,Double> trainHamFreq;
+    TreeMap<String,Double> trainSpamFreq;
 
     public WordCounter() {
         trainHamFreq = new TreeMap<>();
         trainSpamFreq = new TreeMap<>();
+    }
+
+    public TreeMap<String, Double> getHam() {
+        return trainHamFreq;
+    }
+
+    public TreeMap<String, Double> getSpam() {
+        return trainSpamFreq;
     }
 
     public void processFile(File file, String folderFrom) throws IOException {

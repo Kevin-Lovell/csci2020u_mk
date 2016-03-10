@@ -18,7 +18,9 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 public class Main extends Application {
@@ -34,8 +36,13 @@ public class Main extends Application {
         directoryChooser.setInitialDirectory(new File("."));
         File mainDirectory = directoryChooser.showDialog(primaryStage);
 
+        DirectoryChooser directyChooser = new DirectoryChooser();
+        directoryChooser.setInitialDirectory(new File("."));
+        File secondDirectory = directoryChooser.showDialog(primaryStage);
+
         WordCounter wordCounter = new WordCounter();
         System.out.println("File: " + mainDirectory);
+        System.out.println("File: " + secondDirectory);
 
         try {
             //checks what folder is the program looking at right now
@@ -52,20 +59,31 @@ public class Main extends Application {
                 //wordCounter.printWordCounts(2, new File("countOutput.txt"),"spam");
                 System.out.println(wordCounter.trainSpamFreq);
             }
+
+            //checks what folder is the program looking at right now
+            if(secondDirectory.getName().contains("ham")) {
+                wordCounter.processFile(secondDirectory,"ham");
+                //first parameter is for minimum # of appearances the word needs to be shown on list(ie: 2 = print all
+                //values that are appear 2x, ignore all words that appear once)
+                //wordCounter.printWordCounts(2, new File("countOutput.txt"),"ham");
+                System.out.println(wordCounter.trainHamFreq);
+            } else if (secondDirectory.getName().contains("spam")) {
+                wordCounter.processFile(secondDirectory,"spam");
+                //first parameter is for minimum # of appearances the word needs to be shown on list(ie: 2 = print all
+                //values that are appear 2x, ignore all words that appear once)
+                //wordCounter.printWordCounts(2, new File("countOutput.txt"),"spam");
+                System.out.println(wordCounter.trainSpamFreq);
+            }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        Map<String,Double> cloned;
-        cloned=(TreeMap)((TreeMap)wordCounter.trainSpamFreq).clone();
-        System.out.println("Cloned map: "+ cloned);
-
         primaryStage.setTitle("Spam Master 3000");
 
         table = new TableView<>();
-        table.setItems(DataSource.getAllData());
+        table.setItems(DataSource.getAllData(wordCounter.getHam(), wordCounter.getSpam()));
         table.setEditable(true);
 
         TableColumn<TestFile,String> fileColumn = null;
