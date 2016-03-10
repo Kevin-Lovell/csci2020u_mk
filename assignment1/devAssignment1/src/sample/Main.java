@@ -67,7 +67,8 @@ public class Main extends Application {
         File train = new File(mainDirectory + File.separator+ trainPath);
         try {
             processFolder(train, "", wordCounter);
-            processFolder(test, "", wordCounter);
+            wordCounter.doMath();
+            //processFolder(test, "", wordCounter);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -77,7 +78,7 @@ public class Main extends Application {
         primaryStage.setTitle("Spam Master 3000");
 
         table = new TableView<>();
-        table.setItems(DataSource.getAllData(wordCounter.getHam(), wordCounter.getSpam()));
+        table.setItems(DataSource.getAllData(wordCounter.doMath()));
         table.setEditable(true);
 
         TableColumn<TestFile,String> fileColumn = null;
@@ -114,7 +115,7 @@ public class Main extends Application {
         //accuracy = number of correct guesses / total number of files;
         //precision = number of correct guesses / number of spam guesses;
 
-        DataSource dat = new DataSource(wordCounter.trainHamFreq, wordCounter.trainSpamFreq);
+        DataSource dat = new DataSource();
 
         Label accuracyLabel = new Label("Accuracy:");
         editArea.add(accuracyLabel, 0, 0);

@@ -1,6 +1,7 @@
 package sample;
 
 import javafx.stage.Stage;
+import sun.reflect.generics.tree.Tree;
 
 import java.io.*;
 import java.util.*;
@@ -8,10 +9,17 @@ import java.util.*;
 public class WordCounter {
     TreeMap<String,Double> trainHamFreq;
     TreeMap<String,Double> trainSpamFreq;
+    TreeMap<String,Integer> countWords;
+    TreeMap<String,Double> fileSpamProb;
+    TreeMap<String,Double> hamList;
+    TreeMap<String,Double> spamList;
+    TreeMap<String,Double> totalList;
 
     public WordCounter() {
         trainHamFreq = new TreeMap<>();
         trainSpamFreq = new TreeMap<>();
+        countWords = new TreeMap<>();
+        fileSpamProb = new TreeMap<>();
     }
 
     public TreeMap<String, Double> getHam() {
@@ -21,6 +29,21 @@ public class WordCounter {
     public TreeMap<String, Double> getSpam() {
         return trainSpamFreq;
     }
+
+    public TreeMap<String, Integer> getCountWords() { return countWords; }
+
+    public TreeMap<String, Double> getFileSpamProb() { return fileSpamProb; }
+
+    private void countWord(String word) {
+        if (countWords.containsKey(word)) {
+            int oldCount = countWords.get(word);
+            countWords.put(word, oldCount + 1);
+        } else {
+            countWords.put(word, 1);
+        }
+    }
+
+    
 
     public void processFile(File file, String folderFrom) throws IOException {
         if (file.isDirectory()) {
@@ -33,12 +56,22 @@ public class WordCounter {
             //load all of the data and process it into words
             Scanner scanner = new Scanner(file);
             String email = "";
+
             while (scanner.hasNext()) {
                 String word = scanner.next();
                 if ((isWord(word))) {
                     email = email + " " + word;
+                    countWord(word);
                 }
             }
+
+            //Caculations
+
+
+            //fileSpamProb.put(file.getName(), //spamprob);
+
+
+
             //deletes duplicates from scanner(twice to avoid duplicates)
             email = removeDupes(email, "\\ ");
             email = removeDupes(email, "\\ ");
@@ -157,6 +190,86 @@ public class WordCounter {
         } else {
             System.err.println("Cannot write to output file");
         }
+    }
+
+    public TreeMap doMath() {
+        hamList = new TreeMap<>();
+        spamList = new TreeMap<>();
+
+        //uncomment for these to work
+        hamList = trainHamFreq;
+        spamList = trainSpamFreq;
+        totalList = new TreeMap<>();
+
+        totalList = (TreeMap)((TreeMap)spamList).clone();
+
+        Set<String> hamListKeys = hamList.keySet();
+        Iterator<String> hamListKeyIterator = hamListKeys.iterator();
+
+        //This loop combines both the ham list and spam list into one large list of all words
+        while(hamListKeyIterator.hasNext()) {
+            String key = hamListKeyIterator.next();
+            if (spamList.containsKey(key)){
+                totalList.put(key, hamList.get(key) + spamList.get(key));
+            }else{
+                totalList.put(key, hamList.get(key));
+            }
+        }
+
+        Set<String> keys = totalList.keySet();
+        Iterator<String> keyIterator = keys.iterator();
+
+        Map<String,Double> totalList2 = totalList;
+
+        Set<String> keys2 = totalList2.keySet();
+        Iterator<String> keyIterator2 = keys2.iterator();
+
+
+        /////////////////Formula Testing Using PlaceHolder Data//////////////////////
+        //Note: I am unsure how I will obtain the number of files containing spam and ham, so for now they will be fixed (100)
+        //Also In order for this formula to work I would also need a list of ALL words
+
+        TreeMap<String,Double> probInSpamTree;
+        TreeMap<String,Double> probInHamTree;
+        TreeMap<String,Double> probWordIsSpamTree;
+
+        probInSpamTree = new TreeMap<>();
+        probInHamTree = new TreeMap<>();
+        probWordIsSpamTree= new TreeMap<>();
+
+        //Performing calculations to find the probability a word will appear
+        // in ham and the probability it will appear spam
+        while(keyIterator.hasNext()) {
+            String key = keyIterator.next();
+            double probInSpam;
+            if (spamList.containsKey(key)) {
+                probInSpam = spamList.get(key) / spamList.size();
+                probInSpamTree.put(key, probInSpam);
+            } else {
+                probInSpamTree.put(key, 0.0);
+            }
+            double probInHam;
+            if (hamList.containsKey(key)) {
+                probInHam = hamList.get(key) / hamList.size();
+                probInHamTree.put(key, probInHam);
+            } else {
+                probInHamTree.put(key, 0.0);
+            }
+        }
+
+
+        while(keyIterator2.hasNext()) {
+            String key = keyIterator2.next();
+            double probInHam = probInHamTree.get(key);
+            double probInSpam = probInSpamTree.get(key);
+            double probWordIsSpam = probInSpam/(probInHam + probInSpam);
+            probWordIsSpamTree.put(key, probWordIsSpam);
+         //   data.add(new TestFile(key, probWordIsSpam, "test", "ham"));
+        }
+
+        //finalAccuaracy = 1.2345;
+        //finalPrecision = 6.7890;
+        return probWordIsSpamTree;
     }
 
     public static void main(String[] args, Stage primaryStage) {
