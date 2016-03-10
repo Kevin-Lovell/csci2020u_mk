@@ -1,8 +1,6 @@
 package sample;
 
 import javafx.stage.Stage;
-import sun.reflect.generics.tree.DoubleSignature;
-import sun.reflect.generics.tree.Tree;
 
 import java.io.*;
 import java.util.*;

@@ -18,10 +18,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 public class Main extends Application {
     private Stage window;
@@ -30,50 +27,52 @@ public class Main extends Application {
     private TextField accuracyField, precisionField;
     private double accuracy, precision;
 
+    private WordCounter wordCounter;
+
+    public void processFolder(File file, String folderFrom, WordCounter counter) throws IOException {
+        if (file.isDirectory()) {
+            File[] filesInDir = file.listFiles();
+
+            //checks what folder is the program looking at right now
+            if(file.getName().contains("ham")) {
+                wordCounter.processFile(file,"ham");
+                //first parameter is for minimum # of appearances the word needs to be shown on list(ie: 2 = print all
+                //values that are appear 2x, ignore all words that appear once)
+                //wordCounter.printWordCounts(2, new File("countOutput.txt"),"ham");
+                // System.out.println(wordCounter.trainHamFreq);
+            } else if (file.getName().contains("spam")) {
+                wordCounter.processFile(file,"spam");
+                //first parameter is for minimum # of appearances the word needs to be shown on list(ie: 2 = print all
+                //values that are appear 2x, ignore all words that appear once)
+                //wordCounter.printWordCounts(2, new File("countOutput.txt"),"spam");
+                //System.out.println(wordCounter.trainSpamFreq);
+            }
+
+            //rocess all of the files recursively
+            for (int i = 0; i < filesInDir.length; i++) {
+                //System.out.println(filesInDir[i]);
+               // System.out.println("hi2");
+                processFolder(filesInDir[i], folderFrom, wordCounter);
+            }
+        }
+    }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setInitialDirectory(new File("."));
         File mainDirectory = directoryChooser.showDialog(primaryStage);
 
-        DirectoryChooser directyChooser = new DirectoryChooser();
-        directoryChooser.setInitialDirectory(new File("."));
-        File secondDirectory = directoryChooser.showDialog(primaryStage);
+        wordCounter = new WordCounter();
+        System.out.println(mainDirectory.toPath());
 
-        WordCounter wordCounter = new WordCounter();
-        System.out.println("File: " + mainDirectory);
-        System.out.println("File: " + secondDirectory);
-
+        String trainPath = "train";
+        String testPath = "test";
+        File test = new File(mainDirectory + File.separator+ testPath);
+        File train = new File(mainDirectory + File.separator+ trainPath);
         try {
-            //checks what folder is the program looking at right now
-            if(mainDirectory.getName().contains("ham")) {
-                wordCounter.processFile(mainDirectory,"ham");
-                //first parameter is for minimum # of appearances the word needs to be shown on list(ie: 2 = print all
-                //values that are appear 2x, ignore all words that appear once)
-                //wordCounter.printWordCounts(2, new File("countOutput.txt"),"ham");
-                System.out.println(wordCounter.trainHamFreq);
-            } else if (mainDirectory.getName().contains("spam")) {
-                wordCounter.processFile(mainDirectory,"spam");
-                //first parameter is for minimum # of appearances the word needs to be shown on list(ie: 2 = print all
-                //values that are appear 2x, ignore all words that appear once)
-                //wordCounter.printWordCounts(2, new File("countOutput.txt"),"spam");
-                System.out.println(wordCounter.trainSpamFreq);
-            }
-
-            //checks what folder is the program looking at right now
-            if(secondDirectory.getName().contains("ham")) {
-                wordCounter.processFile(secondDirectory,"ham");
-                //first parameter is for minimum # of appearances the word needs to be shown on list(ie: 2 = print all
-                //values that are appear 2x, ignore all words that appear once)
-                //wordCounter.printWordCounts(2, new File("countOutput.txt"),"ham");
-                System.out.println(wordCounter.trainHamFreq);
-            } else if (secondDirectory.getName().contains("spam")) {
-                wordCounter.processFile(secondDirectory,"spam");
-                //first parameter is for minimum # of appearances the word needs to be shown on list(ie: 2 = print all
-                //values that are appear 2x, ignore all words that appear once)
-                //wordCounter.printWordCounts(2, new File("countOutput.txt"),"spam");
-                System.out.println(wordCounter.trainSpamFreq);
-            }
+            processFolder(train, "", wordCounter);
+            processFolder(test, "", wordCounter);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
