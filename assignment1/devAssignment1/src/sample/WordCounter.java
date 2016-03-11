@@ -59,7 +59,19 @@ public class WordCounter {
                 }
                 //calc & if statement for categy
                 //double for %
+                Set<String> countWordKeys = countWords.keySet();
+                Iterator<String> countWordKeysIterator = countWordKeys.iterator();
 
+                while(countWordKeysIterator.hasNext()) {
+                    String key = countWordKeysIterator.next();
+                    double n = 0;
+                    if(probWordIsSpamTree.containsKey(key)){
+                        for(double i = 0; i < countWords.get(key); i++) {
+                            n = n + (Math.log(1 - (probWordIsSpamTree.get(key))) - Math.log(probWordIsSpamTree.get(key)));
+                        }
+
+                    }
+                }
 
                 //calc end
 
