@@ -40,8 +40,10 @@ public class Main extends Application {
                 //values that are appear 2x, ignore all words that appear once)
                 //wordCounter.printWordCounts(2, new File("countOutput.txt"),"ham");
                 // System.out.println(wordCounter.trainHamFreq);
+                wordCounter.doMath(file,"ham");
             } else if (file.getName().contains("spam")) {
                 wordCounter.processFile(file,"spam");
+                wordCounter.doMath(file, "ham");
             }
 
             //rocess all of the files recursively
@@ -67,7 +69,8 @@ public class Main extends Application {
         File train = new File(mainDirectory + File.separator+ trainPath);
         try {
             processFolder(train, "", wordCounter);
-            wordCounter.doMath();
+
+
             //processFolder(test, "", wordCounter);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -78,7 +81,7 @@ public class Main extends Application {
         primaryStage.setTitle("Spam Master 3000");
 
         table = new TableView<>();
-        table.setItems(DataSource.getAllData(wordCounter.doMath()));
+        table.setItems(DataSource.getAllData(wordCounter.getFileSpamProb()));
         table.setEditable(true);
 
         TableColumn<TestFile,String> fileColumn = null;

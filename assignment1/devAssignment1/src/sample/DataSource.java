@@ -26,7 +26,10 @@ public class DataSource {
        while(SpamListKeyIterator.hasNext()) {
            String key = SpamListKeyIterator.next();
            double probWordIsSpam = prob.get(key);
+           //String category = ~.get.(key);
+           //String actualClass = ~.get.(key);
            data.add(new TestFile(key, probWordIsSpam, "test", "ham"));
+           //data.add(new TestFile(key, probWordIsSpam, actualClass, category));
         }
         finalAccuaracy = 1.2345;
         finalPrecision = 6.7890;
