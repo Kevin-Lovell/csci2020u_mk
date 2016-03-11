@@ -64,26 +64,26 @@ public class WordCounter {
                 TreeMap<String,Double> spamList;
                 spamList = probWordIsSpamTree;
 
+                double n = 0;
 
-
-                while(countWordKeysIterator.hasNext()) {
+               // while(countWordKeysIterator.hasNext()) {
                     String key = countWordKeysIterator.next();
-                    double n = 0;
                     double spamProb = spamList.get(key);
                     if(probWordIsSpamTree.containsKey(key)){
-                        for(double i = 0; i < countWords.get(key); i++) {
-                            n = n + (Math.log(1 - (spamProb)) - Math.log(spamProb));
+                        for(double i = 1; i < countWords.get(key); i++) {
+                            n = n + (Math.log(1.0 - (spamProb)) - Math.log(spamProb));
                         }
-
                     }
-                }
+                //}
 
-                //calc end
+                double fileSpamProbValue = 1 / (1 + Math.pow(Math.E,n));
+
+                        //calc end
 
 
                 actClass.put(file.getName(), classification);
                // categor.put(file.getName(), )
-                fileSpamProb.put(file.getName(), 0.0);
+                fileSpamProb.put(file.getName(), fileSpamProbValue);
                 //fileSpamProb.put(file.getName(), % double);
             }
         }
