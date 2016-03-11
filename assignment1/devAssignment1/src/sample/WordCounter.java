@@ -61,13 +61,18 @@ public class WordCounter {
                 //double for %
                 Set<String> countWordKeys = countWords.keySet();
                 Iterator<String> countWordKeysIterator = countWordKeys.iterator();
+                TreeMap<String,Double> spamList;
+                spamList = probWordIsSpamTree;
+
+
 
                 while(countWordKeysIterator.hasNext()) {
                     String key = countWordKeysIterator.next();
                     double n = 0;
+                    double spamProb = spamList.get(key);
                     if(probWordIsSpamTree.containsKey(key)){
                         for(double i = 0; i < countWords.get(key); i++) {
-                            n = n + (Math.log(1 - (probWordIsSpamTree.get(key))) - Math.log(probWordIsSpamTree.get(key)));
+                            n = n + (Math.log(1 - (spamProb)) - Math.log(spamProb));
                         }
 
                     }

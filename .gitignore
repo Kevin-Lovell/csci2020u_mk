@@ -1,5 +1,3 @@
 *.class
 *.*~
-assignment1/devAssignment1/.idea/*
-assignment1/devAssignment1/.idea/workspace.xml
-
+workspace.xml
