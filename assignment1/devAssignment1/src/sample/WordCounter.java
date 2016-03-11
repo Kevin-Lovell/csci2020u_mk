@@ -35,6 +35,10 @@ public class WordCounter {
         return trainSpamFreq;
     }
 
+    public TreeMap<String, String> getCategor() { return categor; }
+
+    public TreeMap<String, String> getActClass() { return actClass; }
+
     public TreeMap<String, Double> getFileSpamProb() { return fileSpamProb; }
 
     //change parameters based on variables
@@ -43,7 +47,7 @@ public class WordCounter {
             // process all of the files recursively
             File[] filesInDir = file.listFiles();
             for (int i = 0; i < filesInDir.length; i++) {
-                processFileforMath(filesInDir[i], probWordIsSpamTree);
+                processFileforMath(filesInDir[i], probWordIsSpamTree, classification);
             }
         } else if (file.exists()) {
             // load all of the data, and process it into words

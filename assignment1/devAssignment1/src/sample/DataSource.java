@@ -2,6 +2,7 @@ package sample;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import jdk.internal.dynalink.support.ClassMap;
 import sun.reflect.generics.tree.Tree;
 
 import java.util.Iterator;
@@ -13,9 +14,11 @@ public class DataSource {
        static double finalAccuaracy, finalPrecision;
 
 
-    public static ObservableList<TestFile> getAllData(TreeMap probSpam) {
+    public static ObservableList<TestFile> getAllData(TreeMap probSpam, TreeMap classMap) {
         ObservableList<TestFile> data = FXCollections.observableArrayList();
         TreeMap<String, Double> prob;
+        TreeMap<String, String> actClass = new TreeMap<>();
+        actClass = classMap;
         prob = new TreeMap<>();
 
         prob = probSpam;
@@ -27,8 +30,8 @@ public class DataSource {
            String key = SpamListKeyIterator.next();
            double probWordIsSpam = prob.get(key);
            //String category = ~.get.(key);
-           //String actualClass = ~.get.(key);
-           data.add(new TestFile(key, probWordIsSpam, "test", "ham"));
+           String actualClass = actClass.get(key);
+           data.add(new TestFile(key, probWordIsSpam, actualClass, "ham"));
            //data.add(new TestFile(key, probWordIsSpam, actualClass, category));
         }
         finalAccuaracy = 1.2345;

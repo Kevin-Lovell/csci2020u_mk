@@ -34,7 +34,7 @@ public class Main extends Application {
             File[] filesInDir = file.listFiles();
 
             //checks what folder is the program looking at right now
-            if(file.getName().contains("ham")) {
+            if(file.getName().equals("ham")) {
                 wordCounter.processFile(file,"ham");
                 //first parameter is for minimum # of appearances the word needs to be shown on list(ie: 2 = print all
                 //values that are appear 2x, ignore all words that appear once)
@@ -43,7 +43,14 @@ public class Main extends Application {
                 wordCounter.doMath(file,"ham");
             } else if (file.getName().contains("spam")) {
                 wordCounter.processFile(file,"spam");
-                wordCounter.doMath(file, "ham");
+                wordCounter.doMath(file, "spam");
+            } else if(file.getName().contains("ham2")) {
+                wordCounter.processFile(file,"ham");
+                //first parameter is for minimum # of appearances the word needs to be shown on list(ie: 2 = print all
+                //values that are appear 2x, ignore all words that appear once)
+                //wordCounter.printWordCounts(2, new File("countOutput.txt"),"ham");
+                // System.out.println(wordCounter.trainHamFreq);
+                wordCounter.doMath(file,"ham2");
             }
 
             //rocess all of the files recursively
@@ -81,7 +88,7 @@ public class Main extends Application {
         primaryStage.setTitle("Spam Master 3000");
 
         table = new TableView<>();
-        table.setItems(DataSource.getAllData(wordCounter.getFileSpamProb()));
+        table.setItems(DataSource.getAllData(wordCounter.getFileSpamProb(),wordCounter.getActClass()));
         table.setEditable(true);
 
         TableColumn<TestFile,String> fileColumn = null;
