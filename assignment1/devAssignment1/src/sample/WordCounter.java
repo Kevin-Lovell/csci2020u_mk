@@ -14,9 +14,9 @@ public class WordCounter {
     TreeMap<String,Double> fileSpamProb;
     TreeMap<String,Double> spamList;
     TreeMap<String,Double> totalList;
-    TreeMap<String,String> categor;
+    TreeMap<String,String> category;
     TreeMap<String, String> actClass;
-
+    TreeMap<String,Double> probWordIsSpamTree;
 
     public WordCounter() {
         trainHamFreq = new TreeMap<>();
@@ -24,7 +24,8 @@ public class WordCounter {
         countWords = new TreeMap<>();
         fileSpamProb = new TreeMap<>();
         actClass = new TreeMap<>();
-        categor = new TreeMap<>();
+        category = new TreeMap<>();
+        probWordIsSpamTree = new TreeMap<>();
     }
 
     public TreeMap<String, Double> getHam() {
@@ -35,21 +36,17 @@ public class WordCounter {
         return trainSpamFreq;
     }
 
-    public TreeMap<String, String> getCategor() { return categor; }
+    public TreeMap<String, String> getCategory() { return category; }
 
     public TreeMap<String, String> getActClass() { return actClass; }
 
     public TreeMap<String, Double> getFileSpamProb() { return fileSpamProb; }
 
+    public TreeMap<String,Double> getProbWordIsSpamTree() { return probWordIsSpamTree; }
+
     //change parameters based on variables
-    public void processFileforMath(File file, TreeMap probWordIsSpamTree, String classification) throws IOException {
-        if (file.isDirectory()) {
-            // process all of the files recursively
-            File[] filesInDir = file.listFiles();
-            for (int i = 0; i < filesInDir.length; i++) {
-                processFileforMath(filesInDir[i], probWordIsSpamTree, classification);
-            }
-        } else if (file.exists()) {
+    public void processFileforMath(File file, TreeMap probWord, String classification) throws IOException {
+        if (file.exists()) {
             // load all of the data, and process it into words
             Scanner scanner = new Scanner(file);
             while (scanner.hasNext()) {
@@ -57,37 +54,39 @@ public class WordCounter {
                 if (isWord(word)) {
                     countWord(word);
                 }
-                //calc & if statement for categy
-                //double for %
-                Set<String> countWordKeys = countWords.keySet();
-                Iterator<String> countWordKeysIterator = countWordKeys.iterator();
-                TreeMap<String,Double> spamList;
-                spamList = probWordIsSpamTree;
-
-                double n = 0;
-
-               // while(countWordKeysIterator.hasNext()) {
-                    String key = countWordKeysIterator.next();
-                    double spamProb = spamList.get(key);
-                    if(probWordIsSpamTree.containsKey(key)){
-                        for(double i = 1; i < countWords.get(key); i++) {
-                            n = n + (Math.log(1.0 - (spamProb)) - Math.log(spamProb));
-                        }
-                    }
-                //}
-
-                double fileSpamProbValue = 1 / (1 + Math.pow(Math.E,n));
-
-                        //calc end
-
-
-                actClass.put(file.getName(), classification);
-               // categor.put(file.getName(), )
-                fileSpamProb.put(file.getName(), fileSpamProbValue);
-                //fileSpamProb.put(file.getName(), % double);
             }
+            //calc & if statement for categy
+            //double for %
+            Set<String> countWordKeys = countWords.keySet();
+            Iterator<String> countWordKeysIterator = countWordKeys.iterator();
+            TreeMap<String, Double> spamList;
+            spamList = this.probWordIsSpamTree;
+
+            double n = 0;
+
+            while (countWordKeysIterator.hasNext()) {
+                String key = countWordKeysIterator.next();
+
+                if(spamList.containsKey(key)){
+                    double spamProb = spamList.get(key);
+                    for(double i = 1; i < countWords.get(key); i++) {
+                        n = n + (Math.log(1.0 - (spamProb)) - Math.log(spamProb));
+                    }
+                }
+                //System.out.println(key + " " + spamProb);
+            }
+
+            double fileSpamProbValue = 1 / (1 + Math.pow(Math.E, n));
+
+            //calc end
+
+            actClass.put(file.getName(), classification);
+            // category.put(file.getName(), )
+            fileSpamProb.put(file.getName(), fileSpamProbValue);
+            //fileSpamProb.put(file.getName(), % double);
         }
     }
+
 
     private void countWord(String word) {
         if (countWords.containsKey(word)) {
@@ -238,7 +237,7 @@ public class WordCounter {
         }
     }
 
-    public TreeMap doMath(File file, String classification) {
+    public TreeMap doMath() {
         hamList = new TreeMap<>();
         spamList = new TreeMap<>();
 
@@ -277,7 +276,7 @@ public class WordCounter {
 
         TreeMap<String,Double> probInSpamTree;
         TreeMap<String,Double> probInHamTree;
-        TreeMap<String,Double> probWordIsSpamTree;
+        //TreeMap<String,Double> probWordIsSpamTree;
 
         probInSpamTree = new TreeMap<>();
         probInHamTree = new TreeMap<>();
@@ -309,18 +308,20 @@ public class WordCounter {
             double probInSpam = probInSpamTree.get(key);
             double probWordIsSpam = probInSpam/(probInHam + probInSpam);
             probWordIsSpamTree.put(key, probWordIsSpam);
-
         }
 
-        //calcs
-        try {
-            //pass variables needed to to calc here
-            processFileforMath(file, probWordIsSpamTree, classification);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        /*calcs
+        if(folderName == "test") {
+            try {
+                //pass variables needed to to calc here
+                processFileforMath(file, probWordIsSpamTree, classification);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            */
+        //}
         //fileSpamProb.put(file.getName(), //spamprob);
 
         return probWordIsSpamTree;

@@ -29,34 +29,55 @@ public class Main extends Application {
 
     private WordCounter wordCounter;
 
+    public void processFolderTest(File file, String folderFrom, WordCounter counter) throws IOException {
+        if (file.isDirectory()) {
+            if(file.getName().contains("ham")) {
+                folderFrom = "ham";
+            } else if(file.getName().contains("spam")) {
+                folderFrom = "spam";
+            }
+            // process all of the files recursively
+            File[] filesInDir = file.listFiles();
+            for (int i = 0; i < filesInDir.length; i++) {
+                if(folderFrom == "ham") {
+                    processFolderTest(filesInDir[i], "ham", counter);
+                } else if(folderFrom == "spam") {
+                    processFolderTest(filesInDir[i],  "spam", counter);
+                }
+                processFolderTest(filesInDir[i], "", counter);
+                System.out.println(i);
+            }
+        } else if (file.exists()) {
+            if(folderFrom == "ham") {
+                counter.processFileforMath(file, counter.getProbWordIsSpamTree(), "ham");
+            } else if(folderFrom == "spam") {
+                counter.processFileforMath(file, counter.getProbWordIsSpamTree(), "spam");
+            }
+
+        }
+
+    }
+
     public void processFolder(File file, String folderFrom, WordCounter counter) throws IOException {
         if (file.isDirectory()) {
             File[] filesInDir = file.listFiles();
-
             //checks what folder is the program looking at right now
             if(file.getName().equals("ham")) {
-                wordCounter.processFile(file,"ham");
-                //first parameter is for minimum # of appearances the word needs to be shown on list(ie: 2 = print all
-                //values that are appear 2x, ignore all words that appear once)
-                //wordCounter.printWordCounts(2, new File("countOutput.txt"),"ham");
-                // System.out.println(wordCounter.trainHamFreq);
-                wordCounter.doMath(file,"ham");
+                counter.processFile(file,"ham");
+
+                counter.doMath();
             } else if (file.getName().contains("spam")) {
-                wordCounter.processFile(file,"spam");
-                wordCounter.doMath(file, "spam");
+                counter.processFile(file,"spam");
+                counter.doMath();
             } else if(file.getName().contains("ham2")) {
-                wordCounter.processFile(file,"ham");
-                //first parameter is for minimum # of appearances the word needs to be shown on list(ie: 2 = print all
-                //values that are appear 2x, ignore all words that appear once)
-                //wordCounter.printWordCounts(2, new File("countOutput.txt"),"ham");
-                // System.out.println(wordCounter.trainHamFreq);
-                wordCounter.doMath(file,"ham2");
+                counter.processFile(file,"ham");
+                counter.doMath();
             }
 
-            //rocess all of the files recursively
+            //process all of the files recursively
             for (int i = 0; i < filesInDir.length; i++) {
 
-                processFolder(filesInDir[i], folderFrom, wordCounter);
+                processFolder(filesInDir[i], folderFrom, counter);
             }
         }
     }
@@ -75,10 +96,10 @@ public class Main extends Application {
         File test = new File(mainDirectory + File.separator+ testPath);
         File train = new File(mainDirectory + File.separator+ trainPath);
         try {
-            processFolder(train, "", wordCounter);
+            processFolder(train, "train", wordCounter);
+            wordCounter.doMath();
+            processFolderTest(test, "", wordCounter);
 
-
-            //processFolder(test, "", wordCounter);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
