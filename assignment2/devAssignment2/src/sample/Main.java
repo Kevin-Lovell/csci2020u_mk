@@ -11,8 +11,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -42,31 +40,31 @@ public class Main extends Application {
         table.setItems(DataSource.getAllDocuments());
         table.setEditable(true);
 
-        TableColumn<Document,String> firstNameColumn = null;
-        firstNameColumn = new TableColumn<>();
-        firstNameColumn.setMinWidth(300);
-        firstNameColumn.setCellValueFactory(new PropertyValueFactory<>("clientFile"));
-        firstNameColumn.setCellFactory(TextFieldTableCell.<Document>forTableColumn());
-        firstNameColumn.setOnEditCommit((CellEditEvent<Document, String> event) -> {
+        TableColumn<Document,String> clientFileColumn = null;
+        clientFileColumn = new TableColumn<>();
+        clientFileColumn.setMinWidth(300);
+        clientFileColumn.setCellValueFactory(new PropertyValueFactory<>("clientFile"));
+        clientFileColumn.setCellFactory(TextFieldTableCell.<Document>forTableColumn());
+        clientFileColumn.setOnEditCommit((CellEditEvent<Document, String> event) -> {
             ((Document)event.getTableView().getItems().get(event.getTablePosition().getRow())).setClientFile(event.getNewValue());
         });
 
-        table.getColumns().add(firstNameColumn);
+        table.getColumns().add(clientFileColumn);
 
-        TableColumn<Document,String> lastNameColumn = null;
-        lastNameColumn = new TableColumn<>();
-        lastNameColumn.setMinWidth(300);
-        lastNameColumn.setCellValueFactory(new PropertyValueFactory<>("serverFile"));
-        lastNameColumn.setCellFactory(TextFieldTableCell.<Document>forTableColumn());
-        lastNameColumn.setOnEditCommit((CellEditEvent<Document, String> event) -> {
+        TableColumn<Document,String> serverFileColumn = null;
+        serverFileColumn = new TableColumn<>();
+        serverFileColumn.setMinWidth(300);
+        serverFileColumn.setCellValueFactory(new PropertyValueFactory<>("serverFile"));
+        serverFileColumn.setCellFactory(TextFieldTableCell.<Document>forTableColumn());
+        serverFileColumn.setOnEditCommit((CellEditEvent<Document, String> event) -> {
             ((Document)event.getTableView().getItems().get(event.getTablePosition().getRow())).setServerFile(event.getNewValue());
         });
 
-        table.getColumns().add(lastNameColumn);
+        table.getColumns().add(serverFileColumn);
 
         /* create an edit form (for the bottom of the user interface) */
         GridPane editArea = new GridPane();
-      
+
         Button downloadButton = new Button("Download");
         downloadButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
@@ -97,10 +95,6 @@ public class Main extends Application {
         Scene scene = new Scene(layout, 600, 600);
         primaryStage.setScene(scene);
         primaryStage.show();
-    }
-
-    private ImageView imageFile(String filename) {
-        return new ImageView(new Image("file:"+filename));
     }
 
     public static void main(String[] args) {
