@@ -1,21 +1,21 @@
 package sample;
 
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellEditEvent;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import java.io.*;
-import java .net.*;
+
+import java.io.File;
 
 public class Main extends Application {
     private Stage window;
@@ -31,9 +31,27 @@ public class Main extends Application {
         We also may need two tables side-by-side because this code reads all of the files
         in a directory into a single table*/
 
-        //TableView<File> table = new TableView<>();
-        //File dir = ... ;
-        //table.getItems().addAll(dir.listFiles());
+        ListView<String> list = new ListView<String>();
+        ObservableList<String> items = FXCollections.observableArrayList();
+
+        File folder = new File("www/samples/");
+        File[] files = folder.listFiles();
+
+        for (File file : files) {
+            if (file.isFile()) {
+                //System.out.println(file.getName());
+                items.add(file.getName());
+            }
+        }
+
+        list.setItems(items);
+
+        list.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println("clicked on " + list.getSelectionModel().getSelectedItem());
+            }
+        });
 
         primaryStage.setTitle("File Sharer v1.0");
 
@@ -42,42 +60,7 @@ public class Main extends Application {
         //get updates of files
         //get a list of files on server to pass to the data source
         //data source prints the files onto the right list
-
-
         //show User sharing dictionary on left list
-
-
-
-
-
-
-
-        /* create the table (for the center of the user interface) */
-        table = new TableView<>();
-        table.setItems(DataSource.getAllDocuments());
-        table.setEditable(true);
-
-        TableColumn<Document,String> clientFileColumn = null;
-        clientFileColumn = new TableColumn<>();
-        clientFileColumn.setMinWidth(300);
-        clientFileColumn.setCellValueFactory(new PropertyValueFactory<>("clientFile"));
-        clientFileColumn.setCellFactory(TextFieldTableCell.<Document>forTableColumn());
-        clientFileColumn.setOnEditCommit((CellEditEvent<Document, String> event) -> {
-            ((Document)event.getTableView().getItems().get(event.getTablePosition().getRow())).setClientFile(event.getNewValue());
-        });
-
-        table.getColumns().add(clientFileColumn);
-
-        TableColumn<Document,String> serverFileColumn = null;
-        serverFileColumn = new TableColumn<>();
-        serverFileColumn.setMinWidth(300);
-        serverFileColumn.setCellValueFactory(new PropertyValueFactory<>("serverFile"));
-        serverFileColumn.setCellFactory(TextFieldTableCell.<Document>forTableColumn());
-        serverFileColumn.setOnEditCommit((CellEditEvent<Document, String> event) -> {
-            ((Document)event.getTableView().getItems().get(event.getTablePosition().getRow())).setServerFile(event.getNewValue());
-        });
-
-        table.getColumns().add(serverFileColumn);
 
         /* create an edit form (for the bottom of the user interface) */
         GridPane editArea = new GridPane();
@@ -106,23 +89,23 @@ public class Main extends Application {
         });
         editArea.add(uploadButton, 1, 0);
 
-        /* arrange all components in the main user interface */
+        /* arrange all components in the main user interface*/
         layout = new BorderPane();
         layout.setTop(editArea);
-        layout.setCenter(table);
+        layout.setLeft(list);
 
-        table.getStylesheets().addAll(getClass().getResource("hidden-tableview-headers.css").toExternalForm());
 
-        Scene scene = new Scene(layout, 600, 600);
+
+        //table.getStylesheets().addAll(getClass().getResource("hidden-tableview-headers.css").toExternalForm());
+
+        Scene scene = new Scene(layout, 500, 600);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
-
     public void connectToServer() {
 
     }
-
 
     public static void main(String[] args) {
         launch(args);
