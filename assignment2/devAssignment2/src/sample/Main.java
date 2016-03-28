@@ -15,7 +15,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
-import java.io.File;
+import java.io.*;
+import java.net.Socket;
+
 
 public class Main extends Application {
     private Stage window;
@@ -33,6 +35,10 @@ public class Main extends Application {
 
         ListView<String> list = new ListView<String>();
         ObservableList<String> items = FXCollections.observableArrayList();
+
+        serverConnThread serverConnThread = new serverConnThread();
+        Thread sCT = new Thread(serverConnThread);
+        sCT.start();
 
         File folder = new File("www/samples/");
         File[] files = folder.listFiles();

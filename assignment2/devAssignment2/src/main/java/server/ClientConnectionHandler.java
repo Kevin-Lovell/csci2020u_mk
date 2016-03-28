@@ -24,7 +24,24 @@ public final class ClientConnectionHandler implements Runnable {
     }
 
     public void getUpdate() {
+        String header = "HTTP/1.1 200 OK\r\n";
+        String contentType = "TEXT";
+        String updates = "";
+        File folder = new File("www/samples");
+        File[] files = folder.listFiles();
 
+        for (File file : files) {
+            if (file.isFile()) {
+                updates += file.getName() + "\r\n";
+            }
+        }
+
+        try {
+            byte[] content = updates.getBytes();
+            sendResponse(header, contentType, content);
+        } catch (IOException e) {
+
+        }
     }
 
     public void run() {
@@ -51,19 +68,23 @@ public final class ClientConnectionHandler implements Runnable {
             String httpVersion = null;
             
             command = requestTokenizer.nextToken();
+
             uri = requestTokenizer.nextToken();
             if (!uri.startsWith("/")) {
                 uri = "/" + uri;
             }
-            
-            httpVersion = requestTokenizer.nextToken();
-            if (command.equalsIgnoreCase("GET") || command.equalsIgnoreCase("POST")) {
+
+            //httpVersion = requestTokenizer.nextToken();
+            if (mainRequestLine.contains("updateMePLS42")) {
+                getUpdate();
+            } else if (command.equalsIgnoreCase("GET") || command.equalsIgnoreCase("POST")) {
                 File baseDir = new File(WEB_DIR);
                 sendFile(new File(baseDir, uri));
+
             } else {
-                sendError(405, "Method Not Allowed", 
-                               "The method ("+command+") requested by your client is not allowed.");
-                System.err.println("HTTP/1.1 405 Method Not Allowed: "+mainRequestLine+"\r\n");
+                    sendError(405, "Method Not Allowed",
+                            "The method ("+command+") requested by your client is not allowed.");
+                    System.err.println("HTTP/1.1 405 Method Not Allowed: "+mainRequestLine+"\r\n");
             }
         } catch (NoSuchElementException e) {
             sendError(400, "Bad Request", "The request sent by your client software was invalid.");

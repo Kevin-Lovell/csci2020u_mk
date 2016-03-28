@@ -9,19 +9,14 @@ public class HttpClient2 {
         BufferedReader in;
         PrintWriter out;
 
-        if (args.length == 0) {
-            System.out.println("Usage:  java HttpClient2 <host> [<port>=80]");
-            System.exit(0);
-        }
+
 
         // get the host name
-        String hostName = args[0];
+        String hostName = "localhost";
 
         // get the port number, if there is one
         int portNumber = 80;
-        if (args.length > 1) {
-            portNumber = Integer.parseInt(args[1]); 
-        }
+
 
         try {
             // connect to the server (3-way connection establishment handshake)
