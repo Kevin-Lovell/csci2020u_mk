@@ -1,0 +1,26 @@
+apply plugin: 'java'
+
+task(runWebServer, dependsOn: 'classes', type: JavaExec) {
+    main = 'server.WebServer'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task(runHTTPBrowser, dependsOn: 'classes', type: JavaExec) {
+    main = 'server.WebBrowser'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task(runHTTPClient, dependsOn: 'classes', type: JavaExec) {
+    main = 'server.HttpClient'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task(runHTTPClient2, dependsOn: 'classes', type: JavaExec) {
+    main = 'server.HttpClient2'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task(runHTTPServer, dependsOn: 'classes', type: JavaExec) {
+    main = 'server.HttpServer'
+    classpath = sourceSets.main.runtimeClasspath
+}

@@ -14,6 +14,8 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import java.io.*;
+import java .net.*;
 
 public class Main extends Application {
     private Stage window;
@@ -34,6 +36,21 @@ public class Main extends Application {
         //table.getItems().addAll(dir.listFiles());
 
         primaryStage.setTitle("File Sharer v1.0");
+
+        //connect to server
+
+        //get updates of files
+        //get a list of files on server to pass to the data source
+        //data source prints the files onto the right list
+
+
+        //show User sharing dictionary on left list
+
+
+
+
+
+
 
         /* create the table (for the center of the user interface) */
         table = new TableView<>();
@@ -68,6 +85,8 @@ public class Main extends Application {
         Button downloadButton = new Button("Download");
         downloadButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
+                //send download request
+
                 //String firstName = fnameField.getText();
                 //table.getItems().add(new Student(0, firstName, a, 0));
                 //fnameField.setText("");
@@ -78,6 +97,8 @@ public class Main extends Application {
         Button uploadButton = new Button("Upload");
         uploadButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
+                //send upload request
+
                 //String firstName = fnameField.getText();
                 //table.getItems().add(new Student(0, firstName, a, 0));
                 //fnameField.setText("");
@@ -96,6 +117,12 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
+
+    public void connectToServer() {
+
+    }
+
 
     public static void main(String[] args) {
         launch(args);

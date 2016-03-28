@@ -3,6 +3,9 @@ package sample;
 import javafx.collections.*;
 
 public class DataSource {
+
+
+
     public static ObservableList<Document> getAllDocuments() {
         ObservableList<Document> documents = FXCollections.observableArrayList();
 
