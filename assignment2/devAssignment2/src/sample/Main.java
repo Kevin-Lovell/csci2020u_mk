@@ -34,7 +34,7 @@ public class Main extends Application {
         ListView<String> list = new ListView<String>();
         ObservableList<String> items = FXCollections.observableArrayList();
 
-        File folder = new File("www/samples/");
+        File folder = new File("clientFiles/");
         File[] files = folder.listFiles();
 
         for (File file : files) {
@@ -45,6 +45,9 @@ public class Main extends Application {
         }
 
         list.setItems(items);
+
+        ListView<String> listServer = new ListView<String>();
+        ObservableList<String> itemsServer = FXCollections.observableArrayList();
 
         list.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -70,9 +73,7 @@ public class Main extends Application {
             @Override public void handle(ActionEvent e) {
                 //send download request
 
-                //String firstName = fnameField.getText();
-                //table.getItems().add(new Student(0, firstName, a, 0));
-                //fnameField.setText("");
+                System.out.println("Downloaded");
             }
         });
         editArea.add(downloadButton, 0, 0);
@@ -82,9 +83,7 @@ public class Main extends Application {
             @Override public void handle(ActionEvent e) {
                 //send upload request
 
-                //String firstName = fnameField.getText();
-                //table.getItems().add(new Student(0, firstName, a, 0));
-                //fnameField.setText("");
+                System.out.println("Uploaded");
             }
         });
         editArea.add(uploadButton, 1, 0);
@@ -93,8 +92,7 @@ public class Main extends Application {
         layout = new BorderPane();
         layout.setTop(editArea);
         layout.setLeft(list);
-
-
+        layout.setRight(listServer);
 
         //table.getStylesheets().addAll(getClass().getResource("hidden-tableview-headers.css").toExternalForm());
 

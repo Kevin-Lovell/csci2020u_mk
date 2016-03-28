@@ -28,20 +28,17 @@ public class HttpClient {
 
             ObservableList<String> items = FXCollections.observableArrayList();
 
-            File folder = new File("www/samples/");
+            /*File folder = new File("www/samples/");
             File[] files = folder.listFiles();
 
             for (File file : files) {
                 if (file.isFile()) {
                     items.add(file.getName());
-                    String requests = "GET samples/" + items + " HTTP/1.0";
+                    String requests = "GET samples/" + items + "HTTP/1.0";
                     String delim = "\r\n";
                     out.print(requests + delim + delim);
                 }
-            }
-
-
-            // send the HTTP request GET /yahoo/yahoo.html HTTP/1.0\n\n
+            }*/
 
             out.flush();
 
