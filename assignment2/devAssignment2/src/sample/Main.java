@@ -15,9 +15,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
-import java.io.*;
-import java.net.Socket;
-
+import java.io.File;
 
 public class Main extends Application {
     private Stage window;
@@ -36,13 +34,11 @@ public class Main extends Application {
         ListView<String> list = new ListView<String>();
         ObservableList<String> items = FXCollections.observableArrayList();
 
-
         serverConnThread serverConnThread = new serverConnThread();
         Thread sCT = new Thread(serverConnThread);
         sCT.start();
 
         File folder = new File("clientFiles/");
-
         File[] files = folder.listFiles();
 
         for (File file : files) {
@@ -54,13 +50,29 @@ public class Main extends Application {
 
         list.setItems(items);
 
+
         ListView<String> listServer = new ListView<String>();
         ObservableList<String> itemsServer = FXCollections.observableArrayList();
+
+        itemsServer.add("filler1");
+        itemsServer.add("filler2");
+        itemsServer.add("filler3");
+        itemsServer.add("filler4");
+
+        listServer.setItems(itemsServer);
+
 
         list.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println("clicked on " + list.getSelectionModel().getSelectedItem());
+            }
+        });
+
+        listServer.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println("clicked on " + listServer.getSelectionModel().getSelectedItem());
             }
         });
 
