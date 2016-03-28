@@ -27,12 +27,12 @@ public final class ClientConnectionHandler implements Runnable {
         String header = "HTTP/1.1 200 OK\r\n";
         String contentType = "TEXT";
         String updates = "";
-        File folder = new File("www/samples");
+        File folder = new File("www");
         File[] files = folder.listFiles();
 
         for (File file : files) {
             if (file.isFile()) {
-                updates += file.getName() + "\r\n";
+                updates += file.getName() + "----------";
             }
         }
 

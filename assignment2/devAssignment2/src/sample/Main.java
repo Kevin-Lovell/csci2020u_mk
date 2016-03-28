@@ -36,11 +36,13 @@ public class Main extends Application {
         ListView<String> list = new ListView<String>();
         ObservableList<String> items = FXCollections.observableArrayList();
 
+        ListView<String> listServer = new ListView<String>();
+        ObservableList<String> itemsServer = FXCollections.observableArrayList();
 
-        serverConnThread serverConnThread = new serverConnThread();
+        serverConnThread serverConnThread = new serverConnThread(itemsServer,listServer);
         Thread sCT = new Thread(serverConnThread);
         sCT.start();
-
+        sCT.interrupt();
         File folder = new File("clientFiles/");
 
         File[] files = folder.listFiles();
@@ -54,8 +56,7 @@ public class Main extends Application {
 
         list.setItems(items);
 
-        ListView<String> listServer = new ListView<String>();
-        ObservableList<String> itemsServer = FXCollections.observableArrayList();
+
 
         list.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -76,15 +77,35 @@ public class Main extends Application {
         /* create an edit form (for the bottom of the user interface) */
         GridPane editArea = new GridPane();
 
+
         Button downloadButton = new Button("Download");
+        //get name of selected listview file
+
         downloadButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 //send download request
+//                serverConnThread serverConnThread = new serverConnThread(fileName);
+//                Thread sCT = new Thread(serverConnThread);
+//                sCT.start();
+//                sCT.interrupt();
+                //clear + update client list view
 
-                System.out.println("Downloaded");
             }
         });
         editArea.add(downloadButton, 0, 0);
+
+
+        Button updateButton = new Button("Update");
+        updateButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                //send update request
+                serverConnThread serverConnThread = new serverConnThread(itemsServer,listServer);
+                Thread sCT = new Thread(serverConnThread);
+                sCT.start();
+                sCT.interrupt();
+            }
+        });
+        editArea.add(updateButton, 2, 0);
 
         Button uploadButton = new Button("Upload");
         uploadButton.setOnAction(new EventHandler<ActionEvent>() {

@@ -1,5 +1,8 @@
 package sample;
 
+import javafx.collections.ObservableList;
+import javafx.scene.control.ListView;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,29 +12,25 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public class serverConnThread implements Runnable {
-    private String temp;
+    private String hostName, temp;
+    private int portNumber;
     private Socket socket;
     private PrintWriter out;
+    private String[] fileArray;
 
-    public serverConnThread() {
-        getUpdate();
+    public serverConnThread(ObservableList<String> items, ListView<String> list) {
+            getUpdate(items, list);
     }
 
-    public serverConnThread(String temp) {
-        this.temp = temp;
+    //download constructor
+    public serverConnThread(String name) {
+            downloadFile(name);
     }
 
-    private BufferedReader in;
-    public void run() {
-        // get the host name
-        String hostName = "localhost";
-
-        // get the port number, if there is one
-        int portNumber = 8080;
-
+    public void downloadFile(String fileName) {
         try {
             // connect to the server (3-way connection establishment handshake)
-            URL url = new URL("http://" + hostName + ":" + portNumber + "/yahoo/yahoo.html");
+            URL url = new URL("http://" + hostName + ":" + portNumber + "/" + fileName);
             URLConnection conn = url.openConnection();
             conn.setDoOutput(false);
             conn.setDoInput(true);
@@ -40,12 +39,10 @@ public class serverConnThread implements Runnable {
             in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String response;
             System.out.println("Response:");
-            while ((response = in.readLine()) != null) {
-                System.out.println(response);
-            }
+//            while ((response = in.readLine()) != null) {
+//                System.out.println(response);
+//            }
 
-            // close the connection (3-way tear down handshake)
-            in.close();
         } catch (IOException e) {
             System.out.println(e);
             e.printStackTrace();
@@ -56,10 +53,27 @@ public class serverConnThread implements Runnable {
         }
     }
 
-    public String getUpdate() {
+    private BufferedReader in;
+    public void run() {
+        // get the host name
+        this.hostName = "localhost";
+
+        // get the port number, if there is one
+        this.portNumber = 8080;
+
+        if(Thread.interrupted()) {
+            System.out.println("hi");
+            return;
+        }
+
+
+    }
+
+    public String getUpdate(ObservableList<String> items, ListView<String> list) {
         String response = "";
         // get the host name
         String hostName = "localhost";
+        list.getItems().clear();
 
         // get the port number, if there is one
         int portNumber = 8080;
@@ -79,11 +93,18 @@ public class serverConnThread implements Runnable {
             out.print(request + delim + delim);
             out.flush();
 
+
             // read and print the response
             System.out.println("Response:");
             while ((response = in.readLine()) != null) {
-                System.out.println(response);
+                fileArray = response.split("----------");
             }
+
+            for(int i = 0; i < fileArray.length; i++) {
+                System.out.println(fileArray[i]);
+                items.add(fileArray[i]);
+            }
+            list.setItems(items);
         } catch (IOException e) {
             System.out.println(e);
             e.printStackTrace();
