@@ -14,7 +14,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-
 import java.io.*;
 import java.net.Socket;
 
@@ -24,6 +23,8 @@ public class Main extends Application {
     private BorderPane layout;
     private TableView<Document> table;
     private TextField sidField, fnameField, lnameField, gpaField;
+    String FileToDownload, FileToUpload;
+
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -43,6 +44,7 @@ public class Main extends Application {
         Thread sCT = new Thread(serverConnThread);
         sCT.start();
         sCT.interrupt();
+
         File folder = new File("clientFiles/");
 
         File[] files = folder.listFiles();
@@ -57,11 +59,22 @@ public class Main extends Application {
         list.setItems(items);
 
 
-
         list.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println("clicked on " + list.getSelectionModel().getSelectedItem());
+                FileToUpload = list.getSelectionModel().getSelectedItem();
+                System.out.println (FileToUpload);
+            }
+        });
+
+
+        listServer.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println("clicked on " + listServer.getSelectionModel().getSelectedItem());
+                FileToDownload = listServer.getSelectionModel().getSelectedItem();
+                System.out.println (FileToDownload);
             }
         });
 
@@ -84,11 +97,40 @@ public class Main extends Application {
         downloadButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 //send download request
-//                serverConnThread serverConnThread = new serverConnThread(fileName);
+                serverConnThread serverConnThread = new serverConnThread();
+                String DLContents = serverConnThread.downloadFile(FileToDownload);
+                System.out.println(DLContents);
 //                Thread sCT = new Thread(serverConnThread);
 //                sCT.start();
 //                sCT.interrupt();
-                //clear + update client list view
+
+                try {
+                    PrintWriter writer = new PrintWriter("clientFiles/" + FileToDownload, "UTF-8");
+                    writer.println(DLContents);
+                    writer.close();
+                }
+                catch(FileNotFoundException ex) {
+                    System.out.println("Unable to open file '" + FileToDownload + "'");
+                }
+                catch(IOException ex) {
+                    System.out.println("Error reading file '" + FileToDownload + "'");
+                }
+
+
+                list.getItems().clear();
+
+                //items.add(FileToDownload);
+
+                File folder = new File("clientFiles/");
+
+                File[] files = folder.listFiles();
+
+                for (File file : files) {
+                    if (file.isFile()) {
+                        //System.out.println(file.getName());
+                        items.add(file.getName());
+                    }
+                }
 
             }
         });

@@ -23,25 +23,28 @@ public class serverConnThread implements Runnable {
     }
 
     //download constructor
-    public serverConnThread(String name) {
-            downloadFile(name);
+    public serverConnThread() {
+
     }
 
-    public void downloadFile(String fileName) {
+    public String downloadFile(String fileName) {
+        String content = "";
         try {
             // connect to the server (3-way connection establishment handshake)
-            URL url = new URL("http://" + hostName + ":" + portNumber + "/" + fileName);
+            URL url = new URL("http://localhost:8080/" + fileName);
             URLConnection conn = url.openConnection();
             conn.setDoOutput(false);
             conn.setDoInput(true);
+
+
 
             // read and print the response
             in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String response;
             System.out.println("Response:");
-//            while ((response = in.readLine()) != null) {
-//                System.out.println(response);
-//            }
+            while ((response = in.readLine()) != null) {
+                content = content + "\n" + response ;
+            }
 
         } catch (IOException e) {
             System.out.println(e);
@@ -51,6 +54,7 @@ public class serverConnThread implements Runnable {
                 in.close();
             } catch (IOException e2) {}
         }
+        return content;
     }
 
     private BufferedReader in;
@@ -62,7 +66,7 @@ public class serverConnThread implements Runnable {
         this.portNumber = 8080;
 
         if(Thread.interrupted()) {
-            System.out.println("hi");
+            System.out.println("interrupted");
             return;
         }
 
