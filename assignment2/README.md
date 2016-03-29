@@ -1,4 +1,4 @@
-# Steps to download and run Assignment 2: Spam Detection
+# Steps to download and run Assignment 2: File Sharing System
 
 1. Clone this repository and pull from Github
 2. In terminal, go to csci2020u_mk/assignment2/devAssignment2
