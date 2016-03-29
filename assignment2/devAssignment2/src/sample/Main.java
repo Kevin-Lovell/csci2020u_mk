@@ -22,7 +22,7 @@ public class Main extends Application {
     private Stage window;
     private BorderPane layout;
     private TextField sidField, fnameField, lnameField, gpaField;
-    String FileToDownload, FileToUpload;
+    String FileToDownload = "", FileToUpload = "";
 
 
     @Override
@@ -83,46 +83,48 @@ public class Main extends Application {
 
         /* create an edit form (for the bottom of the user interface) */
         GridPane editArea = new GridPane();
-
-
+        
         Button downloadButton = new Button("Download");
         //get name of selected listview file
 
         downloadButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 //send download request
-                serverConnThread serverConnThread = new serverConnThread();
-                String DLContents = serverConnThread.downloadFile(FileToDownload);
-                System.out.println(DLContents);
+
+                if (FileToDownload.equals("")){
+                    //The button does nothing without a file selected
+                }else {
+
+
+                    serverConnThread serverConnThread = new serverConnThread();
+                    String DLContents = serverConnThread.downloadFile(FileToDownload);
+                    System.out.println(DLContents);
 //                Thread sCT = new Thread(serverConnThread);
 //                sCT.start();
 //                sCT.interrupt();
 
-                try {
-                    PrintWriter writer = new PrintWriter("clientFiles/" + FileToDownload, "UTF-8");
-                    writer.println(DLContents);
-                    writer.close();
-                }
-                catch(FileNotFoundException ex) {
-                    System.out.println("Unable to open file '" + FileToDownload + "'");
-                }
-                catch(IOException ex) {
-                    System.out.println("Error reading file '" + FileToDownload + "'");
-                }
+                    try {
+                        PrintWriter writer = new PrintWriter("clientFiles/" + FileToDownload, "UTF-8");
+                        writer.println(DLContents);
+                        writer.close();
+                    } catch (FileNotFoundException ex) {
+                        System.out.println("Unable to open file '" + FileToDownload + "'");
+                    } catch (IOException ex) {
+                        System.out.println("Error reading file '" + FileToDownload + "'");
+                    }
 
 
-                list.getItems().clear();
+                    list.getItems().clear();
 
-                //items.add(FileToDownload);
+                    File folder = new File("clientFiles/");
 
-                File folder = new File("clientFiles/");
+                    File[] files = folder.listFiles();
 
-                File[] files = folder.listFiles();
-
-                for (File file : files) {
-                    if (file.isFile()) {
-                        //System.out.println(file.getName());
-                        items.add(file.getName());
+                    for (File file : files) {
+                        if (file.isFile()) {
+                            //System.out.println(file.getName());
+                            items.add(file.getName());
+                        }
                     }
                 }
 
