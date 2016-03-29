@@ -21,18 +21,12 @@ import java.net.Socket;
 public class Main extends Application {
     private Stage window;
     private BorderPane layout;
-    private TableView<Document> table;
     private TextField sidField, fnameField, lnameField, gpaField;
     String FileToDownload, FileToUpload;
 
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-
-        /*This code will be used in the future to to read the files into the table.
-        We may not need the DataSource.java and Document.java files with this code.
-        We also may need two tables side-by-side because this code reads all of the files
-        in a directory into a single table*/
 
         ListView<String> list = new ListView<String>();
         ObservableList<String> items = FXCollections.observableArrayList();
@@ -43,7 +37,7 @@ public class Main extends Application {
         serverConnThread serverConnThread = new serverConnThread(itemsServer,listServer);
         Thread sCT = new Thread(serverConnThread);
         sCT.start();
-        sCT.interrupt();
+       // sCT.interrupt();
 
         File folder = new File("clientFiles/");
 
@@ -62,7 +56,7 @@ public class Main extends Application {
         list.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                System.out.println("clicked on " + list.getSelectionModel().getSelectedItem());
+                System.out.println("clicked on(upload) " + list.getSelectionModel().getSelectedItem());
                 FileToUpload = list.getSelectionModel().getSelectedItem();
                 System.out.println (FileToUpload);
             }
@@ -144,10 +138,19 @@ public class Main extends Application {
                 serverConnThread serverConnThread = new serverConnThread(itemsServer,listServer);
                 Thread sCT = new Thread(serverConnThread);
                 sCT.start();
-                sCT.interrupt();
+               // sCT.interrupt();
             }
         });
         editArea.add(updateButton, 2, 0);
+
+        Button exitButton = new Button("Exit");
+        exitButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                sCT.interrupt();
+                System.exit(0);
+            }
+        });
+        editArea.add(exitButton, 3, 0);
 
         Button uploadButton = new Button("Upload");
         uploadButton.setOnAction(new EventHandler<ActionEvent>() {

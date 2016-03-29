@@ -1,0 +1,5 @@
+
+this is text file 6 line 1
+this is text file 6 line 2
+this is text file 6 line 3
+

@@ -75,7 +75,7 @@ public final class ClientConnectionHandler implements Runnable {
             }
 
             //httpVersion = requestTokenizer.nextToken();
-            if (mainRequestLine.contains("updateMePLS42")) {
+            if (command.equalsIgnoreCase("PUT") || command.equalsIgnoreCase("PATCH")) {
                 getUpdate();
             } else if (command.equalsIgnoreCase("GET") || command.equalsIgnoreCase("POST")) {
                 File baseDir = new File(WEB_DIR);
