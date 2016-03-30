@@ -16,11 +16,13 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import java.io.*;
 import java.net.Socket;
+import java.util.NoSuchElementException;
 
 
 public class Main extends Application {
     private Stage window;
     private BorderPane layout;
+    private serverConnThread serverConnThread = null;
     private TextField sidField, fnameField, lnameField, gpaField;
     String FileToDownload = "", FileToUpload = "";
 
@@ -34,7 +36,7 @@ public class Main extends Application {
         ListView<String> listServer = new ListView<String>();
         ObservableList<String> itemsServer = FXCollections.observableArrayList();
 
-        serverConnThread serverConnThread = new serverConnThread(itemsServer,listServer);
+        serverConnThread = new serverConnThread(itemsServer,listServer);
         Thread sCT = new Thread(serverConnThread);
         sCT.start();
        // sCT.interrupt();
@@ -72,6 +74,15 @@ public class Main extends Application {
             }
         });
 
+        list.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println("clicked on " + list.getSelectionModel().getSelectedItem());
+                FileToUpload = list.getSelectionModel().getSelectedItem();
+                System.out.println (FileToUpload);
+            }
+        });
+
         primaryStage.setTitle("File Sharer v1.0");
 
         //connect to server
@@ -96,7 +107,7 @@ public class Main extends Application {
                 }else {
 
 
-                    serverConnThread serverConnThread = new serverConnThread();
+                    serverConnThread = new serverConnThread();
                     String DLContents = serverConnThread.downloadFile(FileToDownload);
                     System.out.println(DLContents);
 //                Thread sCT = new Thread(serverConnThread);
@@ -137,10 +148,10 @@ public class Main extends Application {
         updateButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 //send update request
-                serverConnThread serverConnThread = new serverConnThread(itemsServer,listServer);
-                Thread sCT = new Thread(serverConnThread);
-                sCT.start();
-               // sCT.interrupt();
+                serverConnThread = new serverConnThread(itemsServer,listServer);
+//                Thread sCT = new Thread(serverConnThread);
+//                sCT.start();
+//               // sCT.interrupt();
             }
         });
         editArea.add(updateButton, 2, 0);
@@ -158,10 +169,34 @@ public class Main extends Application {
         uploadButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 //send upload request
+                String baseDir = folder + "/" + FileToUpload;
+                String uri = "/" + FileToUpload;
+                if (FileToUpload.equals("")){
+                    //The button does nothing without a file selected
+                } else {
+                    serverConnThread = new serverConnThread();
+                    try{
+                        serverConnThread.uploadFile(new File(folder, uri));
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
 
-                System.out.println("Uploaded");
+                    //System.out.println(DLContents);
+
+//                    try {
+//                        PrintWriter writer = new PrintWriter("clientFiles/" + FileToDownload, "UTF-8");
+//                        writer.println(DLContents);
+//                        writer.close();
+//                    } catch (FileNotFoundException ex) {
+//                        System.out.println("Unable to open file '" + FileToDownload + "'");
+//                    } catch (IOException ex) {
+//                        System.out.println("Error reading file '" + FileToDownload + "'");
+//                    }
+                }
+
             }
         });
+
         editArea.add(uploadButton, 1, 0);
 
         /* arrange all components in the main user interface*/
@@ -175,10 +210,6 @@ public class Main extends Application {
         Scene scene = new Scene(layout, 500, 600);
         primaryStage.setScene(scene);
         primaryStage.show();
-    }
-
-    public void connectToServer() {
-
     }
 
     public static void main(String[] args) {

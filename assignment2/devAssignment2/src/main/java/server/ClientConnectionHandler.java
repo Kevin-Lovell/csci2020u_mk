@@ -23,6 +23,44 @@ public final class ClientConnectionHandler implements Runnable {
         }
     }
 
+    public void getUpload(BufferedReader rd) {
+        String header = "HTTP/1.1 200 OK\r\n";
+        String contentType = "TEXT";
+        String updates = "";
+        File folder = new File("www");
+
+        BufferedReader br = new BufferedReader(rd);
+        String line = "";
+        String fileName = "";
+        String content = "";
+        try {
+            for(int i = 0;i < 6;i++) {
+                br.readLine();
+            }
+            StringBuilder sb = new StringBuilder();
+            fileName = br.readLine();
+            while((line = br.readLine()) != null){
+                sb.append(line + "\n");
+            }
+            sb.setLength(sb.length()-1);
+            content = sb.toString();
+
+            try {
+                PrintWriter writer = new PrintWriter("www/" + fileName, "UTF-8");
+                writer.println(content);
+                writer.close();
+            } catch (FileNotFoundException ex) {
+                System.out.println("Unable to open file '" + fileName + "'");
+            } catch (IOException ex) {
+                System.out.println("Error reading file '" + fileName + "'");
+            }
+            getUpdate();
+
+        } catch(IOException e) {
+
+        }
+    }
+
     public void getUpdate() {
         String header = "HTTP/1.1 200 OK\r\n";
         String contentType = "TEXT";
@@ -46,9 +84,10 @@ public final class ClientConnectionHandler implements Runnable {
 
     public void run() {
         String mainRequestLine = null;
+
         try {
             mainRequestLine = requestInput.readLine();
-            handleRequest(mainRequestLine);
+            handleRequest(mainRequestLine, requestInput);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -60,31 +99,32 @@ public final class ClientConnectionHandler implements Runnable {
         }
     }
 
-    private void handleRequest(String mainRequestLine) throws IOException { 
+    private void handleRequest(String mainRequestLine, BufferedReader reqInput) throws IOException {
         try {
             StringTokenizer requestTokenizer = new StringTokenizer(mainRequestLine);
             String command = null;
             String uri = null;
             String httpVersion = null;
-            
+
             command = requestTokenizer.nextToken();
 
             uri = requestTokenizer.nextToken();
+
             if (!uri.startsWith("/")) {
                 uri = "/" + uri;
             }
 
-            //httpVersion = requestTokenizer.nextToken();
             if (command.equalsIgnoreCase("PUT") || command.equalsIgnoreCase("PATCH")) {
                 getUpdate();
-            } else if (command.equalsIgnoreCase("GET") || command.equalsIgnoreCase("POST")) {
+            } else if (command.equalsIgnoreCase("GET")) {
                 File baseDir = new File(WEB_DIR);
                 sendFile(new File(baseDir, uri));
-
+            } else if(command.equalsIgnoreCase("POST")) {
+                getUpload(reqInput);
             } else {
-                    sendError(405, "Method Not Allowed",
-                            "The method ("+command+") requested by your client is not allowed.");
-                    System.err.println("HTTP/1.1 405 Method Not Allowed: "+mainRequestLine+"\r\n");
+                sendError(405, "Method Not Allowed",
+                        "The method ("+command+") requested by your client is not allowed.");
+                System.err.println("HTTP/1.1 405 Method Not Allowed: "+mainRequestLine+"\r\n");
             }
         } catch (NoSuchElementException e) {
             sendError(400, "Bad Request", "The request sent by your client software was invalid.");
@@ -93,8 +133,6 @@ public final class ClientConnectionHandler implements Runnable {
         }
     }
 
-    
-        
     private String getContentType(String filename) {
         if (filename.endsWith(".html") || filename.endsWith(".htm")) {
             return "text/html";
@@ -145,7 +183,7 @@ public final class ClientConnectionHandler implements Runnable {
                               byte[] content, long lastModified) throws IOException {
         requestOutput.writeBytes(header);
         requestOutput.writeBytes("Content-Type: "+contentType+"\r\n");
-        requestOutput.writeBytes("Server: Simple-Http-Server/1.0\r\n");
+        requestOutput.writeBytes("Server: File-Sharing-Server/1.0\r\n");
         requestOutput.writeBytes("Date: "+(new Date())+"\r\n");
         requestOutput.writeBytes("Content-Length: "+content.length+"\r\n");
         if (lastModified > 0) {
