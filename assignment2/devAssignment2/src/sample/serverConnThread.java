@@ -102,8 +102,6 @@ public class serverConnThread implements Runnable {
                         requestOutput.close();
                         socket.close();
                     } catch (IOException e2) {}
-
-
                 } catch (IOException e) {
                     System.err.println("Server Error while processing new socket\r\n");
                     e.printStackTrace();
@@ -140,7 +138,7 @@ public class serverConnThread implements Runnable {
             // read and print the response
             in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String response;
-            System.out.println("Response:");
+            //System.out.println("Response:");
             while ((response = in.readLine()) != null) {
                 content = content + "\n" + response ;
             }

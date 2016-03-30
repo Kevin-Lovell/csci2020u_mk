@@ -54,8 +54,6 @@ public final class ClientConnectionHandler implements Runnable {
             } catch (IOException ex) {
                 System.out.println("Error reading file '" + fileName + "'");
             }
-            getUpdate();
-
         } catch(IOException e) {
 
         }
@@ -163,23 +161,23 @@ public final class ClientConnectionHandler implements Runnable {
         } catch (FileNotFoundException e) {
             fileInput = null;
         }
-        
+
         if (fileInput != null) {
             fileInput.read(content);
             fileInput.close();
             sendResponse(header, contentType, content);
         } else {
-            sendError(404, "File Not Found", 
-                      "The requested file ("+file.getName()+") does not exist on the server.");
+            sendError(404, "File Not Found",
+                    "The requested file ("+file.getName()+") does not exist on the server.");
         }
     }
 
-    private void sendResponse(String header, String contentType, 
+    private void sendResponse(String header, String contentType,
                               byte[] content) throws IOException {
         sendResponse(header, contentType, content, 0);
     }
 
-    private void sendResponse(String header, String contentType, 
+    private void sendResponse(String header, String contentType,
                               byte[] content, long lastModified) throws IOException {
         requestOutput.writeBytes(header);
         requestOutput.writeBytes("Content-Type: "+contentType+"\r\n");
@@ -199,15 +197,15 @@ public final class ClientConnectionHandler implements Runnable {
         String header = "HTTP/1.1 "+code+" "+title+"\r\n";
         String contentType = "text/html";
         String content = "<!DOCTYPE html>" +
-                         "<html>\r\n" +
-                         "  <head>\r\n" +
-                         "    <title>Http Error "+code+" "+title+"</title>\r\n" +
-                         "  </head>\r\n" +
-                         "  <body>\r\n" +
-                         "    <h1>Http Error "+code+" "+title+"</h1>\r\n" +
-                         "    <p>"+message+"</p>\r\n" +
-                         "  </body>\r\n" +
-                         "</html>\r\n";
+                "<html>\r\n" +
+                "  <head>\r\n" +
+                "    <title>Http Error "+code+" "+title+"</title>\r\n" +
+                "  </head>\r\n" +
+                "  <body>\r\n" +
+                "    <h1>Http Error "+code+" "+title+"</h1>\r\n" +
+                "    <p>"+message+"</p>\r\n" +
+                "  </body>\r\n" +
+                "</html>\r\n";
         sendResponse(header, contentType, content.getBytes());
     }
 }
