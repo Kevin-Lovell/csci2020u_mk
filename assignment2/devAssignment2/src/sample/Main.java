@@ -261,12 +261,12 @@ public class Main extends Application {
 
         actionMenu.getItems().add(new SeparatorMenuItem());
 
-        MenuItem deleteItem = new MenuItem("Delete");
+        MenuItem deleteItem = new MenuItem("Delete from Server");
         actionMenu.getItems().add(deleteItem);
         deleteItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 //send delete request
-                System.out.println("delete" + FileToDownload);
+              //  System.out.println("delete" + FileToDownload);
                 serverConnThread = new serverConnThread();
                 if (FileToDownload.equals("")) {
 
