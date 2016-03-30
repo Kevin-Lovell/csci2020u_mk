@@ -81,9 +81,6 @@ public class Main extends Application {
         /* create an edit form (for the bottom of the user interface) */
         GridPane editArea = new GridPane();
 
-        Button downloadButton = new Button("Download");
-        //get name of selected listview file
-
         GridPane editArea2 = new GridPane();
         Button yes = new Button("Yes");
         Button no = new Button("No");
@@ -98,7 +95,22 @@ public class Main extends Application {
         Stage stage = new Stage();
         Scene scene2 = new Scene(layout2, 360, 50);
 
-        downloadButton.setOnAction(new EventHandler<ActionEvent>() {
+        Menu fileMenu = new Menu("File");
+
+        MenuItem exitMenuItem = new MenuItem("Exit");
+        exitMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                sCT.interrupt();
+                System.exit(0);
+            }
+        });
+        fileMenu.getItems().add(exitMenuItem);
+
+        Menu actionMenu = new Menu("Actions");
+
+        MenuItem downloadItem = new MenuItem("Download");
+        actionMenu.getItems().add(downloadItem);
+        downloadItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 //send download request
                 if (items.contains(FileToDownload)) {
@@ -185,30 +197,12 @@ public class Main extends Application {
                 }
             }
         });
-        editArea.add(downloadButton, 0, 0);
 
+        actionMenu.getItems().add(new SeparatorMenuItem());
 
-        Button updateButton = new Button("Update");
-        updateButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
-                //send update request
-                serverConnThread = new serverConnThread(itemsServer,listServer);
-
-            }
-        });
-        editArea.add(updateButton, 2, 0);
-
-        Button exitButton = new Button("Exit");
-        exitButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
-                sCT.interrupt();
-                System.exit(0);
-            }
-        });
-        editArea.add(exitButton, 3, 0);
-
-        Button uploadButton = new Button("Upload");
-        uploadButton.setOnAction(new EventHandler<ActionEvent>() {
+        MenuItem uploadItem = new MenuItem("Upload");
+        actionMenu.getItems().add(uploadItem);
+        uploadItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 //send download request
                 if (itemsServer.contains(FileToUpload)) {
@@ -263,11 +257,24 @@ public class Main extends Application {
             }
         });
 
-        editArea.add(uploadButton, 1, 0);
+        actionMenu.getItems().add(new SeparatorMenuItem());
 
+        MenuItem updateItem = new MenuItem("Update");
+        actionMenu.getItems().add(updateItem);
+        updateItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                //send update request
+                serverConnThread = new serverConnThread(itemsServer,listServer);
+
+            }
+        });
+
+        MenuBar menuBar = new MenuBar();
+        menuBar.getMenus().add(fileMenu);
+        menuBar.getMenus().add(actionMenu);
         /* arrange all components in the main user interface*/
         layout = new BorderPane();
-        layout.setTop(editArea);
+        layout.setTop(menuBar);
         layout.setLeft(list);
         layout.setRight(listServer);
 
