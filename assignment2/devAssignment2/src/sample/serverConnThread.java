@@ -154,6 +154,26 @@ public class serverConnThread implements Runnable {
         return content;
     }
 
+    public void deleteFile(String fileName) {
+        String header = "DELETE /"+ fileName;
+        Platform.runLater(new Runnable() {
+            @Override public void run() {
+                try {
+                    Socket socket = new Socket("localhost", 8080);
+                    DataOutputStream requestOutput = new DataOutputStream(socket.getOutputStream());
+                    requestOutput.writeBytes(header);
+                    try {
+                        requestOutput.close();
+                        socket.close();
+                    } catch (IOException e2) {}
+                } catch (IOException e) {
+                    System.err.println("Server Error while processing new socket\r\n");
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
     boolean notInterrupted() {
         if(Thread.interrupted()) {
             return false;

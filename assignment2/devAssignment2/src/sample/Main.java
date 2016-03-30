@@ -257,6 +257,25 @@ public class Main extends Application {
             }
         });
 
+
+
+        actionMenu.getItems().add(new SeparatorMenuItem());
+
+        MenuItem deleteItem = new MenuItem("Delete");
+        actionMenu.getItems().add(deleteItem);
+        deleteItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                //send delete request
+                System.out.println("delete" + FileToDownload);
+                serverConnThread = new serverConnThread();
+                if (FileToDownload.equals("")) {
+
+                } else {
+                    serverConnThread.deleteFile(FileToDownload);
+                }
+            }
+        });
+
         actionMenu.getItems().add(new SeparatorMenuItem());
 
         MenuItem updateItem = new MenuItem("Update");
@@ -265,7 +284,6 @@ public class Main extends Application {
             @Override public void handle(ActionEvent e) {
                 //send update request
                 serverConnThread = new serverConnThread(itemsServer,listServer);
-
             }
         });
 

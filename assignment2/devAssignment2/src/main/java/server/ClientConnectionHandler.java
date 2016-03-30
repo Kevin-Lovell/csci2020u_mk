@@ -111,7 +111,7 @@ public final class ClientConnectionHandler implements Runnable {
             if (!uri.startsWith("/")) {
                 uri = "/" + uri;
             }
-
+            System.out.println(command);
             if (command.equalsIgnoreCase("PUT") || command.equalsIgnoreCase("PATCH")) {
                 getUpdate();
             } else if (command.equalsIgnoreCase("GET")) {
@@ -119,6 +119,10 @@ public final class ClientConnectionHandler implements Runnable {
                 sendFile(new File(baseDir, uri));
             } else if(command.equalsIgnoreCase("POST")) {
                 getUpload(reqInput);
+            } else if(command.equalsIgnoreCase("DELETE")) {
+
+                File baseDir = new File(WEB_DIR);
+                deleteFile(new File(baseDir, uri));
             } else {
                 sendError(405, "Method Not Allowed",
                         "The method ("+command+") requested by your client is not allowed.");
@@ -130,6 +134,20 @@ public final class ClientConnectionHandler implements Runnable {
             e.printStackTrace();
         }
     }
+
+    public void deleteFile(File file) {
+        try{
+            file.delete();
+            if(file.delete()) {
+                System.out.print("Hi");
+            }
+        }catch(Exception e){
+
+            e.printStackTrace();
+
+        }
+    }
+
 
     private String getContentType(String filename) {
         if (filename.endsWith(".html") || filename.endsWith(".htm")) {
