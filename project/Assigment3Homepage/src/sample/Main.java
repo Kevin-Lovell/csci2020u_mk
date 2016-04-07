@@ -73,6 +73,7 @@ public class Main extends Application {
         Label userLabel = new Label("Username");
         gridPane.add(userLabel, 1,1 );
         TextField userField = new TextField();
+        userField.setText("csci2020utest@gmail.com");
         userField.setPrefWidth(300);
         userField.setPromptText("youremail@domain.com");
         GridPane.setHalignment(userField, HPos.LEFT);
@@ -83,6 +84,7 @@ public class Main extends Application {
         gridPane.add(passLabel, 1, 2);
         TextField passField = new PasswordField();
         passField.setPromptText("");
+        passField.setText("thisclassisgood");
         GridPane.setHalignment(passField, HPos.LEFT);
         gridPane.add(passField, 2, 2);
 
@@ -115,7 +117,6 @@ public class Main extends Application {
 
         stage.setScene(scene2);
         stage.show();
-
 
         ListView<String> list = new ListView<String>();
 

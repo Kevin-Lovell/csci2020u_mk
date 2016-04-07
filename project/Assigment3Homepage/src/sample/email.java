@@ -1,6 +1,7 @@
 package sample;
 
 import javax.mail.Address;
+import javax.mail.Message;
 import java.util.Date;
 import java.util.Objects;
 
@@ -11,9 +12,9 @@ public class email {
     private String subject;
     private Date date;
     private Address addressFrom;
-    private Object message;
+    private Message message;
 
-    public email(Date date, Address address, String subject, Object message) {
+    public email(Date date, Address address, String subject, Message message) {
         this.setAddressFrom(address);
         this.setDate(date);
         this.setMessage(message);
@@ -44,11 +45,11 @@ public class email {
         this.addressFrom = addressFrom;
     }
 
-    public Object getMessage() {
+    public Message getMessage() {
         return message;
     }
 
-    public void setMessage(Object message) {
+    public void setMessage(Message message) {
         this.message = message;
     }
 }

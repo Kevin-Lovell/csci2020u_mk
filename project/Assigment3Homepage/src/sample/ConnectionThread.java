@@ -13,6 +13,7 @@ import java.util.Properties;
  */
 public class ConnectionThread implements Runnable {
     private String username, password;
+    private ObservableList<email> emails = FXCollections.observableArrayList();
 
     public ConnectionThread(String username, String password) {
         this.setUsername(username);
@@ -40,33 +41,44 @@ public class ConnectionThread implements Runnable {
     }
 
     public ObservableList<String> getAllMail() {
-        ObservableList<email> emails = FXCollections.observableArrayList();
 
+    //String host = "smtp.gmail.com";
+        String host = "pop.gmail.com";
         Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
+//        props.put("mail.smtp.auth", "true");
+//        props.put("mail.smtp.starttls.enable", "true");
+//        props.put("mail.smtp.host", "smtp.gmail.com");
+//        props.put("mail.smtp.port", "587");
 
-        Session session = Session.getInstance(props,
-                new javax.mail.Authenticator() {
-                    protected javax.mail.PasswordAuthentication getPasswordAuthentication() {
-                        return new javax.mail.PasswordAuthentication(username, password);
-                    }
-                });
+//        props.put("mail.pop3.host", host);
+//        props.put("mail.pop3.port", "465");
+//        props.put("mail.pop3.starttls.enable", "true");
+//        Session emailSession = Session.getDefaultInstance(props);
 
+        props.setProperty("mail.store.protocol", "imaps");
+//
+//        Session session = Session.getInstance(props,
+//                new javax.mail.Authenticator() {
+//                    protected javax.mail.PasswordAuthentication getPasswordAuthentication() {
+//                        return new javax.mail.PasswordAuthentication(username, password);
+//                    }
+//                });
 
+    host = "imap.gmail.com";
 
 
         ObservableList<String> messages2 = FXCollections.observableArrayList();
 
         try {
 
-            Store store = session.getStore("pop3s");
+//            Store store = session.getStore("pop3s");
 
-            store.connect("smtp.gmail.com", username, password);
+            Session session = Session.getInstance(props, null);
+            Store store = session.getStore();
 
-            Folder emailFolder = store.getFolder("INBOX");
+            store.connect(host, username, password);
+
+            Folder emailFolder = store.getFolder("SENT");
             emailFolder.open(Folder.READ_ONLY);
 
             Message[] messages = emailFolder.getMessages();
@@ -76,14 +88,36 @@ public class ConnectionThread implements Runnable {
             Label messageNum = new Label("Inbox (" + messages.length + " messages)");
 
 
-            //messages2.add("Inbox (" + messages.length + " messages)");
+            messages2.add("Inbox (" + messages.length + " messages)");
 
             for (int i = 0, j = messages.length; i < j; i++) {
                 Message message = messages[i];
+                emails.add(new email(message.getSentDate(), message.getFrom()[0], message.getSubject(), message));
                 messages2.add(String.valueOf(i+1) + ". " + message.getFrom()[0] + ": " + message.getSubject());
 //                System.out.println("Text: " + message.getContent().toString());
             }
 
+            for(email e: emails) {
+                try {
+                    System.out.println(e.getDate().toString()+ " " + e.getAddressFrom()+ " " + e.getSubject());
+                    Object content = e.getMessage().getContent();
+                    if (content instanceof String)
+                    {
+                        String body = (String)content;
+                        System.out.println("CONTENT:" + body);
+
+                    }
+                    else if (content instanceof Multipart)
+                    {
+                        Multipart mp = (Multipart) e.getMessage().getContent();
+                        BodyPart bp = mp.getBodyPart(0);
+                        System.out.println("CONTENT:" + bp.getContent());
+                    }
+
+                } catch (Exception mex) {
+                    mex.printStackTrace();
+                }
+            }
 
             emailFolder.close(false);
             store.close();
@@ -95,7 +129,6 @@ public class ConnectionThread implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
 
         return messages2;
     }
