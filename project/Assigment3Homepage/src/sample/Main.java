@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -39,15 +40,15 @@ public class Main extends Application {
     Group layout = new Group();
     Scene scene2 = new Scene(layout, 1280, 720);
 
+    ListView<String> list = new ListView<String>();
+    TextArea emailWindow = new TextArea();
+
     @Override
     public void start(Stage primaryStage) {
         OpenHomepage(primaryStage);
-
     }
 
     public void OpenHomepage(Stage primaryStage){
-
-
         // gridPane.setGridLinesVisible(true);
         gridPane.setPadding(new Insets(400, 0, 0, 450));
         gridPane.setVgap(10);
@@ -93,7 +94,7 @@ public class Main extends Application {
                 primaryStage.close();
                 final String username = userField.getText();
                 final String password = passField.getText();
-                email(stage, username, password);
+                email(stage, "csci2020utest2@gmail.com", "thisclassisgood");
 
             }
         });
@@ -123,11 +124,8 @@ public class Main extends Application {
                     }
                 });
 
-
-        stage.setScene(scene2);
-        stage.show();
-
         ObservableList<String> messages2 = FXCollections.observableArrayList();
+        ObservableList<String> messageContent = FXCollections.observableArrayList();
 
         try{
             Store store = session.getStore("pop3s");
@@ -147,13 +145,19 @@ public class Main extends Application {
             Label messageNum = new Label("Inbox (" + messages.length + " messages)");
             number.add(messageNum, 0, 0);
 
-            //messages2.add("Inbox (" + messages.length + " messages)");
-
             for (int i = 0, j = messages.length; i < j; i++) {
                 Message message = messages[i];
                 messages2.add(String.valueOf(i+1) + ". " + message.getFrom()[0] + ": " + message.getSubject());
-//                System.out.println("Text: " + message.getContent().toString());
+                messageContent.add(message.getContent().toString());
             }
+
+            emailWindow.setPrefRowCount(38);
+            emailWindow.setPrefColumnCount(41);
+            emailWindow.setWrapText(true);
+            emailWindow.setTranslateX(697);
+            emailWindow.setTranslateY(47);
+
+
 
             emailFolder.close(false);
             store.close();
@@ -166,13 +170,21 @@ public class Main extends Application {
             e.printStackTrace();
         }
 
-        ListView<String> list = new ListView<String>();
-
         list.setItems(messages2);
         list.setPrefWidth(600);
         list.setPrefHeight(500);
         list.setTranslateX(35);
         list.setTranslateY(150);
+
+        list.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                int index = list.getSelectionModel().getSelectedIndex();
+                System.out.println("selected " + index);
+
+                emailWindow.setText(messageContent.get(index));
+            }
+        });
 
         Image bottomBanner = new Image("coldMail3.png");
         ImageView bannerImage = new ImageView();
@@ -188,7 +200,7 @@ public class Main extends Application {
         envelopeImage.setImage(envelope);
 
         GridPane composeSection = new GridPane();
-       // composeSection.setGridLinesVisible(true);
+        // composeSection.setGridLinesVisible(true);
         composeSection.setPadding(new Insets(50, 0, 0, 700));
         composeSection.setVgap(10);
         composeSection.setHgap(10);
@@ -226,8 +238,6 @@ public class Main extends Application {
         messageField.setPrefColumnCount(33);
         messageField.setWrapText(true);
         composeSection.add(messageField, 2, 3);
-
-
 
         Button delete = new Button("Delete");
         delete.setOnAction(new EventHandler<ActionEvent>() {
@@ -298,17 +308,23 @@ public class Main extends Application {
         layout.getChildren().add(envelopeImage);
         layout.getChildren().add(bannerImage);
         layout.getChildren().add(list);
-        layout.getChildren().add(composeBorder);
-        layout.getChildren().add(composeSection);
+        //layout.getChildren().add(composeBorder);
+        //layout.getChildren().add(composeSection);
         layout.getChildren().add(delete);
         layout.getChildren().add(view);
         layout.getChildren().add(reply);
-        layout.getChildren().add(send);
+        //layout.getChildren().add(send);
         layout.getChildren().add(number);
+        layout.getChildren().add(emailWindow);
+
+        stage.setScene(scene2);
+        stage.show();
     }
 
 
 }
+
+
 
 
 
