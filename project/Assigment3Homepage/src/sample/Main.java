@@ -38,6 +38,7 @@ public class Main extends Application {
     Stage stage = new Stage();
     Group layout = new Group();
     Scene scene2 = new Scene(layout, 1280, 720);
+    private ConnectionThread connectionThread = null;
 
     @Override
     public void start(Stage primaryStage) {
@@ -46,8 +47,6 @@ public class Main extends Application {
     }
 
     public void OpenHomepage(Stage primaryStage){
-
-
         // gridPane.setGridLinesVisible(true);
         gridPane.setPadding(new Insets(400, 0, 0, 450));
         gridPane.setVgap(10);
@@ -110,65 +109,17 @@ public class Main extends Application {
     }
 
     public void email(Stage stage, String username, String password){
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
-
-        Session session = Session.getInstance(props,
-                new javax.mail.Authenticator() {
-                    protected javax.mail.PasswordAuthentication getPasswordAuthentication() {
-                        return new javax.mail.PasswordAuthentication(username, password);
-                    }
-                });
-
+        connectionThread = new ConnectionThread(username,password);
+        Thread cT = new Thread(connectionThread);
+        cT.start();
 
         stage.setScene(scene2);
         stage.show();
 
-        ObservableList<String> messages2 = FXCollections.observableArrayList();
-
-        try{
-            Store store = session.getStore("pop3s");
-
-            store.connect("smtp.gmail.com", username, password);
-
-            Folder emailFolder = store.getFolder("INBOX");
-            emailFolder.open(Folder.READ_ONLY);
-
-            Message[] messages = emailFolder.getMessages();
-
-            // composeSection.setGridLinesVisible(true);
-            number.setPadding(new Insets(125, 0, 0, 35));
-            number.setVgap(10);
-            number.setHgap(10);
-
-            Label messageNum = new Label("Inbox (" + messages.length + " messages)");
-            number.add(messageNum, 0, 0);
-
-            //messages2.add("Inbox (" + messages.length + " messages)");
-
-            for (int i = 0, j = messages.length; i < j; i++) {
-                Message message = messages[i];
-                messages2.add(String.valueOf(i+1) + ". " + message.getFrom()[0] + ": " + message.getSubject());
-//                System.out.println("Text: " + message.getContent().toString());
-            }
-
-            emailFolder.close(false);
-            store.close();
-
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         ListView<String> list = new ListView<String>();
 
-        list.setItems(messages2);
+        list.setItems(connectionThread.getAllMail());
         list.setPrefWidth(600);
         list.setPrefHeight(500);
         list.setTranslateX(35);
@@ -179,16 +130,16 @@ public class Main extends Application {
         bannerImage.setY(345);
         bannerImage.setImage(bottomBanner);
 
-        Image envelope = new Image("coldMail1.png");
-        ImageView envelopeImage = new ImageView();
-        envelopeImage.setFitWidth(600);
-        envelopeImage.setFitHeight(300);
-        envelopeImage.setX(285);
-        envelopeImage.setY(-50);
-        envelopeImage.setImage(envelope);
-
+//        Image envelope = new Image("coldMail1.png");
+//        ImageView envelopeImage = new ImageView();
+//        envelopeImage.setFitWidth(600);
+//        envelopeImage.setFitHeight(300);
+//        envelopeImage.setX(285);
+//        envelopeImage.setY(-50);
+//        envelopeImage.setImage(envelope);
+//
         GridPane composeSection = new GridPane();
-       // composeSection.setGridLinesVisible(true);
+//        /composeSection.setGridLinesVisible(true);
         composeSection.setPadding(new Insets(50, 0, 0, 700));
         composeSection.setVgap(10);
         composeSection.setHgap(10);
@@ -260,42 +211,44 @@ public class Main extends Application {
 
             }
         });
+
+        reply.setVisible(false);
         reply.setTranslateX(340);
         reply.setTranslateY(40);
         reply.setPrefWidth(150);
         reply.setPrefHeight(50);
 
         Button send = new Button("Send");
-        send.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent ee) {
-                try {
-                    Message message = new MimeMessage(session);
-                    message.setFrom(new InternetAddress(username));
-                    message.setRecipients(Message.RecipientType.TO,
-                            InternetAddress.parse(toField.getText()));
-                    message.setSubject(subjectField.getText());
-                    message.setText(messageField.getText());
-
-                    Transport.send(message);
-
-                    System.out.println("Message Sent");
-
-                } catch (MessagingException e) {
-                    throw new RuntimeException(e);
-                }
-
-                toField.clear();
-                subjectField.clear();
-                messageField.clear();
-
-            }
-        });
+//        send.setOnAction(new EventHandler<ActionEvent>() {
+//            @Override public void handle(ActionEvent ee) {
+//                try {
+//                    Message message = new MimeMessage(session);
+//                    message.setFrom(new InternetAddress(username));
+//                    message.setRecipients(Message.RecipientType.TO,
+//                            InternetAddress.parse(toField.getText()));
+//                    message.setSubject(subjectField.getText());
+//                    message.setText(messageField.getText());
+//
+//                    Transport.send(message);
+//
+//                    System.out.println("Message Sent");
+//
+//                } catch (MessagingException e) {
+//                    throw new RuntimeException(e);
+//                }
+//
+//                toField.clear();
+//                subjectField.clear();
+//                messageField.clear();
+//
+//            }
+//        });
         send.setTranslateX(940);
         send.setTranslateY(580);
         send.setPrefWidth(150);
         send.setPrefHeight(50);
 
-        layout.getChildren().add(envelopeImage);
+       // layout.getChildren().add(envelopeImage);
         layout.getChildren().add(bannerImage);
         layout.getChildren().add(list);
         layout.getChildren().add(composeBorder);
