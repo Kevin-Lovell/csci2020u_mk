@@ -30,7 +30,7 @@ public class Main extends Application {
     public static void main(String[] args) {
         Application.launch(args);
     }
-
+    private ObservableList<email> emails = FXCollections.observableArrayList();
     Group root = new Group();
     Scene scene = new Scene(root, 1280, 720, Color.WHITE);
     GridPane gridPane = new GridPane();
@@ -76,7 +76,7 @@ public class Main extends Application {
         Label userLabel = new Label("Username");
         gridPane.add(userLabel, 1,1 );
         TextField userField = new TextField();
-        userField.setText("csci2020utest@gmail.com");
+        userField.setText("csci2020utest2@gmail.com");
         userField.setPrefWidth(300);
         userField.setPromptText("youremail@domain.com");
         GridPane.setHalignment(userField, HPos.LEFT);
@@ -121,9 +121,26 @@ public class Main extends Application {
         stage.setScene(scene2);
         stage.show();
 
+
         ListView<String> list = new ListView<String>();
 
         list.setItems(connectionThread.getAllMail());
+
+        Label messageNum = new Label("Inbox (" +" messages)");
+        number.add(messageNum, 0, 0);
+
+//        for (int i = 0, j = messages.length; i < j; i++) {
+//            Message message = messages[i];
+//            messages2.add(String.valueOf(i+1) + ". " + message.getFrom()[0] + ": " + message.getSubject());
+//            messageContent.add(message.getContent().toString());
+//        }
+
+        emailWindow.setPrefRowCount(38);
+        emailWindow.setPrefColumnCount(41);
+        emailWindow.setWrapText(true);
+        emailWindow.setTranslateX(697);
+        emailWindow.setTranslateY(47);
+
         list.setPrefWidth(600);
         list.setPrefHeight(500);
         list.setTranslateX(35);
@@ -135,7 +152,12 @@ public class Main extends Application {
                 int index = list.getSelectionModel().getSelectedIndex();
                 System.out.println("selected " + index);
 
-                emailWindow.setText(messageContent.get(index));
+                Thread t1 = new Thread(new Runnable() {
+                    public void run() {
+                        emailWindow.setText(connectionThread.mailBody(index));
+                    }
+                });
+                t1.start();
             }
         });
 
@@ -154,7 +176,8 @@ public class Main extends Application {
 //
         GridPane composeSection = new GridPane();
 
-        // composeSection.setGridLinesVisible(true);
+//        /composeSection.setGridLinesVisible(true);
+
         composeSection.setPadding(new Insets(50, 0, 0, 700));
         composeSection.setVgap(10);
         composeSection.setHgap(10);
@@ -261,7 +284,7 @@ public class Main extends Application {
         send.setPrefWidth(150);
         send.setPrefHeight(50);
 
-       // layout.getChildren().add(envelopeImage);
+        // layout.getChildren().add(envelopeImage);
         layout.getChildren().add(bannerImage);
         layout.getChildren().add(list);
         //layout.getChildren().add(composeBorder);
@@ -279,7 +302,6 @@ public class Main extends Application {
 
 
 }
-
 
 
 

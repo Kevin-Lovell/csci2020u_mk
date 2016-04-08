@@ -14,14 +14,69 @@ import java.util.Properties;
 public class ConnectionThread implements Runnable {
     private String username, password;
     private ObservableList<email> emails = FXCollections.observableArrayList();
-
+    private Folder emailFolder;
+    private Store store;
     public ConnectionThread(String username, String password) {
         this.setUsername(username);
         this.setPassword(password);
     }
 
-    public void run() {
+    boolean notInterrupted() {
+        if(Thread.interrupted()) {
+            try {
+                emailFolder.close(false);
+                store.close();
+                return false;
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return true;
+    }
 
+    public void run() {
+        while(notInterrupted()) {
+//            Platform.runLater(new Runnable() {
+//                @Override
+//                public void run() {
+//                    getUpdate();
+//                }
+//            });
+            try {
+                Thread.sleep(10000);
+
+            } catch (InterruptedException ex) {
+                break;
+            }
+        }
+    }
+
+    public ObservableList<email> getEmails() {
+        return emails;
+    }
+
+    public String mailBody(int index) {
+        String body = "";
+        try {
+            Object content = emails.get(index-1).getMessage().getContent();
+            if (content instanceof String) {
+                body = (String) content;
+                System.out.println("CONTENT:" + body);
+                return body;
+
+            } else if (content instanceof Multipart) {
+                Multipart mp = (Multipart) content;
+                BodyPart bp = mp.getBodyPart(0);
+                System.out.println("CONTENT:" + bp.getContent());
+                body = bp.getContent().toString();
+                return body;
+            }
+        } catch (Exception mex) {
+            mex.printStackTrace();
+        }
+        return body;
     }
 
     public String getUsername() {
@@ -74,19 +129,14 @@ public class ConnectionThread implements Runnable {
 //            Store store = session.getStore("pop3s");
 
             Session session = Session.getInstance(props, null);
-            Store store = session.getStore();
+            store = session.getStore();
 
             store.connect(host, username, password);
 
-            Folder emailFolder = store.getFolder("SENT");
+            emailFolder = store.getFolder("INBOX");
             emailFolder.open(Folder.READ_ONLY);
 
             Message[] messages = emailFolder.getMessages();
-
-
-
-            Label messageNum = new Label("Inbox (" + messages.length + " messages)");
-
 
             messages2.add("Inbox (" + messages.length + " messages)");
 
@@ -119,8 +169,8 @@ public class ConnectionThread implements Runnable {
                 }
             }
 
-            emailFolder.close(false);
-            store.close();
+            //emailFolder.close(false);
+            //store.close();
 
         } catch (NoSuchProviderException e) {
             e.printStackTrace();
