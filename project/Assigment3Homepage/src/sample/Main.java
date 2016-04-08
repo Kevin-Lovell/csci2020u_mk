@@ -206,7 +206,6 @@ public class Main extends Application {
             }
         });
 
-        System.out.println(index);
         Rectangle listBorder = new Rectangle();
         listBorder.setFill(Color.LIGHTGRAY);
         listBorder.setX(85);
