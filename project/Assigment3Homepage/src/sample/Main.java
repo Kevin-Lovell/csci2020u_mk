@@ -57,7 +57,6 @@ public class Main extends Application {
     Group root = new Group();
     Scene scene = new Scene(root, 1280, 720, Color.WHITE);
     GridPane gridPane = new GridPane();
-    GridPane number = new GridPane();
 
     Stage stage = new Stage();
     Group layout = new Group();
@@ -160,11 +159,13 @@ public class Main extends Application {
         stage.show();
 
         TextArea emailWindow = new TextArea();
+        emailWindow.setEditable(false);
         emailWindow.setPrefRowCount(39);
         emailWindow.setPrefColumnCount(39);
         emailWindow.setWrapText(true);
         emailWindow.setTranslateX(700);
-        emailWindow.setTranslateY(45);
+        emailWindow.setTranslateY(75);
+
 
         Image bottomBanner = new Image("coldMail3.png");
         ImageView bannerImage = new ImageView();
@@ -176,10 +177,12 @@ public class Main extends Application {
         list.setPrefWidth(550);
         list.setPrefHeight(615);
         list.setTranslateX(80);
-        list.setTranslateY(45);
+        list.setTranslateY(75);
 
-//        Label messageNum = new Label("Inbox (" +" messages)");
-//        number.add(messageNum, 0, 0);
+        Label messageNum = new Label("Inbox (" +" messages)");
+        messageNum.setTranslateX(85);
+        messageNum.setTranslateY(50);
+
 
         list.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -199,7 +202,7 @@ public class Main extends Application {
         Rectangle listBorder = new Rectangle();
         listBorder.setFill(Color.LIGHTGRAY);
         listBorder.setX(85);
-        listBorder.setY(40);
+        listBorder.setY(70);
         listBorder.setWidth(550);
         listBorder.setHeight(615);
         listBorder.setArcWidth(10);
@@ -210,17 +213,17 @@ public class Main extends Application {
         Rectangle emailBorder = new Rectangle();
         emailBorder.setFill(Color.LIGHTGRAY);
         emailBorder.setX(705);
-        emailBorder.setY(40);
+        emailBorder.setY(70);
         emailBorder.setWidth(535);
         emailBorder.setHeight(615);
         emailBorder.setArcWidth(10);
         emailBorder.setArcHeight(10);
 
 
-        Label newLabel = new Label("Compose");
-        Label replyLabel = new Label("Reply");
-        Label deleteLabel = new Label("Delete");
-        Label exitLabel = new Label("Exit");
+        Label newLabel = new Label("    Compose    ");
+        Label replyLabel = new Label("    Reply    ");
+        Label deleteLabel = new Label("    Delete    ");
+        Label exitLabel = new Label("    Exit    ");
 
         newLabel.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override public void handle(MouseEvent e) {
@@ -260,12 +263,14 @@ public class Main extends Application {
 
 
         //layout.getChildren().add(envelopeImage);
+        layout.getChildren().add(messageNum);
         layout.getChildren().add(bannerImage);
         layout.getChildren().add(listBorder);
         layout.getChildren().add(list);
         layout.getChildren().add(emailBorder);
         layout.getChildren().add(emailWindow);
         MenuBar menuBar = new MenuBar();
+        menuBar.setTranslateX(160);
         menuBar.getMenus().add(newMenu);
         menuBar.getMenus().add(replyMenu);
         menuBar.getMenus().add(deleteMenu);
@@ -301,7 +306,7 @@ public class Main extends Application {
         Rectangle emailBorder = new Rectangle();
         emailBorder.setFill(Color.LIGHTGRAY);
         emailBorder.setX(30);
-        emailBorder.setY(80);
+        emailBorder.setY(40);
         emailBorder.setWidth(1230);
         emailBorder.setHeight(620);
         emailBorder.setArcWidth(10);
@@ -309,43 +314,43 @@ public class Main extends Application {
 
         GridPane composeSection = new GridPane();
         composeSection.setGridLinesVisible(true);
-        composeSection.setPadding(new Insets(100, 0, 0, 50));
+        composeSection.setPadding(new Insets(100, 0, 0, 10));
         composeSection.setVgap(10);
         composeSection.setHgap(10);
 
 
         Label toLabel = new Label("To:");
         toLabel.setTranslateX(80);
-        toLabel.setTranslateY(112);
+        toLabel.setTranslateY(72);
 
 
         TextField toField = new TextField();
         toField.setPrefWidth(1050);
         toField.setTranslateX(150);
-        toField.setTranslateY(110);
+        toField.setTranslateY(70);
 
 
         Label subjectLabel = new Label("Subject:");
         subjectLabel.setTranslateX(80);
-        subjectLabel.setTranslateY(152);
+        subjectLabel.setTranslateY(112);
 
 
         TextField subjectField = new TextField();
         subjectField.setPrefWidth(1050);
         subjectField.setTranslateX(150);
-        subjectField.setTranslateY(150);
+        subjectField.setTranslateY(110);
 
 
         Label messageLabel = new Label("Message:");
         messageLabel.setTranslateX(80);
-        messageLabel.setTranslateY(192);
+        messageLabel.setTranslateY(152);
 
         TextArea messageField = new TextArea();
         messageField.setPrefWidth(1050);
         messageField.setPrefHeight(400);
         messageField.setWrapText(true);
         messageField.setTranslateX(150);
-        messageField.setTranslateY(190);
+        messageField.setTranslateY(150);
         //composeSection.add(messageField, 2, 3);
 
         Button back = new Button("Back");
@@ -469,7 +474,7 @@ public class Main extends Application {
 
         });
         send.setTranslateX(500);
-        send.setTranslateY(630);
+        send.setTranslateY(590);
         send.setPrefWidth(150);
         send.setPrefHeight(50);
 
@@ -484,14 +489,14 @@ public class Main extends Application {
         });
 
         discard.setTranslateX(700);
-        discard.setTranslateY(630);
+        discard.setTranslateY(590);
         discard.setPrefWidth(150);
         discard.setPrefHeight(50);
 
 
 
         MenuBar OptionsMenu = new MenuBar();
-        OptionsMenu.getMenus().add(fontMenu);
+        //OptionsMenu.getMenus().add(fontMenu);
         OptionsMenu.getMenus().add(fontSizeMenu);
         OptionsMenu.getMenus().add(boldMenu);
         OptionsMenu.getMenus().add(italicsMenu);

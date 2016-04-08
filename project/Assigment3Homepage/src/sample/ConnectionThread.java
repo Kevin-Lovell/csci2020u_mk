@@ -60,16 +60,16 @@ public class ConnectionThread implements Runnable {
     public String mailBody(int index) {
         String body = "";
         try {
-            Object content = emails.get(index-1).getMessage().getContent();
+            Object content = emails.get(index).getMessage().getContent();
             if (content instanceof String) {
                 body = (String) content;
-                System.out.println("CONTENT:" + body);
+                //System.out.println("CONTENT:" + body);
                 return body;
 
             } else if (content instanceof Multipart) {
                 Multipart mp = (Multipart) content;
                 BodyPart bp = mp.getBodyPart(0);
-                System.out.println("CONTENT:" + bp.getContent());
+                //System.out.println("CONTENT:" + bp.getContent());
                 body = bp.getContent().toString();
                 return body;
             }
@@ -97,7 +97,7 @@ public class ConnectionThread implements Runnable {
 
     public ObservableList<String> getAllMail() {
 
-    //String host = "smtp.gmail.com";
+        //String host = "smtp.gmail.com";
         String host = "pop.gmail.com";
         Properties props = new Properties();
 //        props.put("mail.smtp.auth", "true");
@@ -119,7 +119,7 @@ public class ConnectionThread implements Runnable {
 //                    }
 //                });
 
-    host = "imap.gmail.com";
+        host = "imap.gmail.com";
 
 
         ObservableList<String> messages2 = FXCollections.observableArrayList();
@@ -138,7 +138,7 @@ public class ConnectionThread implements Runnable {
 
             Message[] messages = emailFolder.getMessages();
 
-            messages2.add("Inbox (" + messages.length + " messages)");
+            //messages2.add("Inbox (" + messages.length + " messages)");
 
             for (int i = 0, j = messages.length; i < j; i++) {
                 Message message = messages[i];
@@ -149,19 +149,19 @@ public class ConnectionThread implements Runnable {
 
             for(email e: emails) {
                 try {
-                    System.out.println(e.getDate().toString()+ " " + e.getAddressFrom()+ " " + e.getSubject());
+                    //System.out.println(e.getDate().toString()+ " " + e.getAddressFrom()+ " " + e.getSubject());
                     Object content = e.getMessage().getContent();
                     if (content instanceof String)
                     {
                         String body = (String)content;
-                        System.out.println("CONTENT:" + body);
+                        //System.out.println("CONTENT:" + body);
 
                     }
                     else if (content instanceof Multipart)
                     {
                         Multipart mp = (Multipart) e.getMessage().getContent();
                         BodyPart bp = mp.getBodyPart(0);
-                        System.out.println("CONTENT:" + bp.getContent());
+                        //System.out.println("CONTENT:" + bp.getContent());
                     }
 
                 } catch (Exception mex) {
