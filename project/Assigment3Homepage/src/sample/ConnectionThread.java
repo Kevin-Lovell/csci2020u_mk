@@ -1,28 +1,29 @@
 package sample;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.scene.control.Label;
-
 import javax.mail.*;
 import java.util.Properties;
 
-/**
- * Created by aad on 4/7/16.
- */
 public class ConnectionThread implements Runnable {
-    private String username, password;
+    private String username, password, client, host;
     private ObservableList<email> emails = FXCollections.observableArrayList();
     private Folder emailFolder;
     private Store store;
 
-    public ConnectionThread(String username, String password) {
+    public ConnectionThread(String username, String password, String client) {
         this.setUsername(username);
         this.setPassword(password);
+        this.setClient(client);
     }
 
+    public void setClient(String client) {
+        this.client = client;
+    }
+
+    public String getClient() {
+        return client;
+    }
     boolean notInterrupted() {
         if(Thread.interrupted()) {
             try {
@@ -39,23 +40,6 @@ public class ConnectionThread implements Runnable {
     }
 
     public void run() {
-        String host = "pop.gmail.com";
-        Properties props = new Properties();
-        props.setProperty("mail.store.protocol", "imaps");
-        host = "imap.gmail.com";
-        try {
-            Session session = Session.getInstance(props, null);
-            store = session.getStore();
-            store.connect(host, username, password);
-
-        } catch(AuthenticationFailedException e) {
-
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         while(notInterrupted()) {
             try {
                 Thread.sleep(0);
@@ -125,7 +109,6 @@ public class ConnectionThread implements Runnable {
     }
 
     public ObservableList<String> getAllMail() {
-        String host = "pop.gmail.com";
         Properties props = new Properties();
         props.setProperty("mail.store.protocol", "imaps");
         host = "imap.gmail.com";
@@ -134,11 +117,11 @@ public class ConnectionThread implements Runnable {
 
         try {
             Session session = Session.getInstance(props,
-                new javax.mail.Authenticator() {
-                    protected javax.mail.PasswordAuthentication getPasswordAuthentication() {
-                        return new javax.mail.PasswordAuthentication(username, password);
-                    }
-                });
+                    new javax.mail.Authenticator() {
+                        protected javax.mail.PasswordAuthentication getPasswordAuthentication() {
+                            return new javax.mail.PasswordAuthentication(username, password);
+                        }
+                    });
 
             store = session.getStore();
 
@@ -149,7 +132,7 @@ public class ConnectionThread implements Runnable {
             emailFolder.open(Folder.READ_ONLY);
             System.out.println(emailFolder.getParent().getURLName().toString());
             System.out.println(emailFolder.getURLName().toString());
-           // System.out.println(emailFolder.getParent().);
+            // System.out.println(emailFolder.getParent().);
             Folder[] f = store.getDefaultFolder().list();
             for(Folder fd:f)
                 System.out.println(">> "+fd.getName());

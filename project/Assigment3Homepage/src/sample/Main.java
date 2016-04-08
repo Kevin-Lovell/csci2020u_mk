@@ -16,37 +16,15 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import java.util.Properties;
-import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.geometry.VPos;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.stage.Stage;
 
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import javax.mail.AuthenticationFailedException;
+import javax.mail.NoSuchProviderException;
+import javax.mail.Session;
+import javax.mail.Store;
 import java.util.Properties;
-
-
 
 public class Main extends Application {
 
@@ -63,6 +41,7 @@ public class Main extends Application {
     Scene scene2 = new Scene(layout, 1280, 720, Color.web("#1F4060"));
 
     private int index;
+    private Store store;
     Stage emailStage = new Stage();
     Group emailLayout = new Group();
     Scene scene3 = new  Scene(emailLayout, 1280, 720, Color.web("#1F4060"));
@@ -74,6 +53,20 @@ public class Main extends Application {
 
     private BorderPane borderPane;
 
+
+    public static void alertBox(String alertMessage, String title)
+    {
+        alertBox(alertMessage, title, null);
+    }
+
+    public static void alertBox(String alertMessage, String title, String alertHeader)
+    {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(alertHeader);
+        alert.setContentText(alertMessage);
+        alert.showAndWait();
+    }
 
     @Override
     public void start(Stage primaryStage) {
@@ -115,17 +108,17 @@ public class Main extends Application {
         gridPane.add(userField, 2, 1);
 
         ObservableList<String> emailDomain = FXCollections.observableArrayList(
-                        "gmail",
-                        "hotmail",
-                        "rogers"
-                );
+                "GMail",
+                "Windows Live Hotmail",
+                "Outlook",
+                "Rogers",
+                "Yahoo! Mail"
+        );
 
         final ComboBox emailDropdown = new ComboBox(emailDomain);
-        emailDropdown.setValue("gmail");
+        emailDropdown.setValue("GMail");
+        emailDropdown.setMaxWidth(150);
         gridPane.add(emailDropdown,3,1);
-
-
-
         Label passLabel = new Label("Password");
         gridPane.add(passLabel, 1, 2);
         TextField passField = new PasswordField();
@@ -137,13 +130,39 @@ public class Main extends Application {
         Button Login = new Button("Login");
         Login.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
-                primaryStage.close();
                 final String username = userField.getText();
                 final String password = passField.getText();
-                //final String username = "csci2020utest@gmail.com";
-                //final String password = "thisclassisgood";
-                email(username, password);
 
+                if(userField.getText().isEmpty() || passField.getText().isEmpty()) {
+                    alertBox("Missing Credentials","Error");
+                } else {
+                    boolean failed = true;
+                    Properties props = new Properties();
+                    props.setProperty("mail.store.protocol", "imaps");
+                    String host = "imap.gmail.com";
+                    try {
+                        Session session = Session.getInstance(props, null);
+                        store = session.getStore();
+                        store.connect(host, username, password);
+
+                    } catch(AuthenticationFailedException ex) {
+                        failed = false;
+                    } catch (NoSuchProviderException ex) {
+                        ex.printStackTrace();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    if(!failed) {
+                        alertBox("Login Failed","Error");
+                    } else {
+                        String client = emailDropdown.getValue().toString();
+                        System.out.println(client);
+                        //final String username = "csci2020utest@gmail.com";
+                        //final String password = "thisclassisgood";
+                        primaryStage.close();
+                        email(username, password, client);
+                    }
+                }
             }
         });
         gridPane.add(Login, 2, 3);
@@ -158,12 +177,12 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    public void email(String username, String password){
+    public void email(String username, String password, String client){
         Label messageNum = new Label("");
         messageNum.setTranslateX(85);
         messageNum.setTranslateY(50);
 
-        connectionThread = new ConnectionThread(username,password);
+        connectionThread = new ConnectionThread(username,password, client);
         Thread cT = new Thread(connectionThread);
         cT.start();
 
@@ -246,7 +265,7 @@ public class Main extends Application {
 
         newLabel.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override public void handle(MouseEvent e) {
-                emailPage(username, password);
+                emailPage(username, password, client);
                 stage.close();
             }
         });
@@ -308,7 +327,7 @@ public class Main extends Application {
 
     }
 
-    public void emailPage(String username, String password){
+    public void emailPage(String username, String password, String client){
         emailStage.setTitle("ColdMail - Compose Email");
         emailStage.setScene(scene3);
         emailStage.setResizable(false);
@@ -385,7 +404,7 @@ public class Main extends Application {
         back.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 emailStage.close();
-                email(username, password);
+                email(username, password, client);
             }
         });
         back.setTranslateX(1205);
@@ -551,6 +570,5 @@ public class Main extends Application {
     }
 
 }
-
 
 
