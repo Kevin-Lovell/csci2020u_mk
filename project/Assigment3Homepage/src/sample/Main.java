@@ -55,17 +55,17 @@ public class Main extends Application {
     }
 
     Group root = new Group();
-    Scene scene = new Scene(root, 1280, 720, Color.WHITE);
+    Scene scene = new Scene(root, 1280, 720, Color.web("#1F4060"));
     GridPane gridPane = new GridPane();
 
     Stage stage = new Stage();
     Group layout = new Group();
-    Scene scene2 = new Scene(layout, 1280, 720);
+    Scene scene2 = new Scene(layout, 1280, 720, Color.web("#1F4060"));
 
     private int index;
     Stage emailStage = new Stage();
     Group emailLayout = new Group();
-    Scene scene3 = new  Scene(emailLayout, 1280, 720);
+    Scene scene3 = new  Scene(emailLayout, 1280, 720, Color.web("#1F4060"));
 
     private ConnectionThread connectionThread = null;
     private ObservableList<email> emails = FXCollections.observableArrayList();
@@ -84,7 +84,7 @@ public class Main extends Application {
 
     public void OpenHomepage(Stage primaryStage){
         // gridPane.setGridLinesVisible(true);
-        gridPane.setPadding(new Insets(400, 0, 0, 450));
+        gridPane.setPadding(new Insets(400, 0, 0, 400));
         gridPane.setVgap(10);
         gridPane.setHgap(10);
 
@@ -113,6 +113,17 @@ public class Main extends Application {
         userField.setPromptText("youremail@domain.com");
         GridPane.setHalignment(userField, HPos.LEFT);
         gridPane.add(userField, 2, 1);
+
+        ObservableList<String> emailDomain = FXCollections.observableArrayList(
+                        "gmail",
+                        "hotmail",
+                        "rogers"
+                );
+
+        final ComboBox emailDropdown = new ComboBox(emailDomain);
+        emailDropdown.setValue("gmail");
+        gridPane.add(emailDropdown,3,1);
+
 
 
         Label passLabel = new Label("Password");
@@ -164,8 +175,8 @@ public class Main extends Application {
 
         TextArea emailWindow = new TextArea();
         emailWindow.setEditable(false);
-        emailWindow.setPrefRowCount(39);
-        emailWindow.setPrefColumnCount(39);
+        emailWindow.setPrefHeight(615);
+        emailWindow.setPrefColumnCount(40);
         emailWindow.setWrapText(true);
         emailWindow.setTranslateX(700);
         emailWindow.setTranslateY(75);
@@ -206,6 +217,7 @@ public class Main extends Application {
             }
         });
 
+        System.out.println(index);
         Rectangle listBorder = new Rectangle();
         listBorder.setFill(Color.LIGHTGRAY);
         listBorder.setX(85);
@@ -221,7 +233,7 @@ public class Main extends Application {
         emailBorder.setFill(Color.LIGHTGRAY);
         emailBorder.setX(705);
         emailBorder.setY(70);
-        emailBorder.setWidth(535);
+        emailBorder.setWidth(550);
         emailBorder.setHeight(615);
         emailBorder.setArcWidth(10);
         emailBorder.setArcHeight(10);
