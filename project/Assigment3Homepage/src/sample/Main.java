@@ -62,6 +62,7 @@ public class Main extends Application {
     Group layout = new Group();
     Scene scene2 = new Scene(layout, 1280, 720);
 
+    private int index;
     Stage emailStage = new Stage();
     Group emailLayout = new Group();
     Scene scene3 = new  Scene(emailLayout, 1280, 720);
@@ -147,6 +148,9 @@ public class Main extends Application {
     }
 
     public void email(String username, String password){
+        Label messageNum = new Label("");
+        messageNum.setTranslateX(85);
+        messageNum.setTranslateY(50);
 
         connectionThread = new ConnectionThread(username,password);
         Thread cT = new Thread(connectionThread);
@@ -179,19 +183,22 @@ public class Main extends Application {
         list.setTranslateX(80);
         list.setTranslateY(75);
 
-        Label messageNum = new Label("Inbox (" +" messages)");
-        messageNum.setTranslateX(85);
-        messageNum.setTranslateY(50);
-
+        Thread t1 = new Thread(new Runnable() {
+            public void run() {
+                messageNum.setText(connectionThread.getNumberOfMsg());
+            }
+        });
+        t1.start();
 
         list.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                int index = list.getSelectionModel().getSelectedIndex();
+                index = list.getSelectionModel().getSelectedIndex();
                 //System.out.println("selected " + index);
 
                 Thread t1 = new Thread(new Runnable() {
                     public void run() {
+                        emails = connectionThread.getEmails();
                         emailWindow.setText(connectionThread.mailBody(index));
                     }
                 });
@@ -199,6 +206,7 @@ public class Main extends Application {
             }
         });
 
+        System.out.println(index);
         Rectangle listBorder = new Rectangle();
         listBorder.setFill(Color.LIGHTGRAY);
         listBorder.setX(85);
@@ -234,7 +242,15 @@ public class Main extends Application {
 
         replyLabel.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override public void handle(MouseEvent e) {
-
+                Thread t1 = new Thread(new Runnable() {
+                    public void run() {
+                        System.out.println(emails.get(index).getMessageBody());
+                        System.out.println(emails.get(index).getAddressString());
+                        System.out.println(emails.get(index).getDate());
+                        System.out.println(emails.get(index).getSubject());
+                    }
+                });
+                t1.start();
             }
         });
 
@@ -247,6 +263,7 @@ public class Main extends Application {
 
         exitLabel.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override public void handle(MouseEvent e) {
+                cT.interrupt();
                 System.exit(0);
             }
         });
@@ -523,7 +540,6 @@ public class Main extends Application {
     }
 
 }
-
 
 
 

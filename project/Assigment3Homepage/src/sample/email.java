@@ -1,7 +1,10 @@
 package sample;
 
 import javax.mail.Address;
+import javax.mail.BodyPart;
 import javax.mail.Message;
+import javax.mail.Multipart;
+import javax.mail.internet.InternetAddress;
 import java.util.Date;
 import java.util.Objects;
 
@@ -37,9 +40,7 @@ public class email {
         this.date = date;
     }
 
-    public Address getAddressFrom() {
-        return addressFrom;
-    }
+    public Address getAddressFrom() { return addressFrom; }
 
     public void setAddressFrom(Address addressFrom) {
         this.addressFrom = addressFrom;
@@ -51,5 +52,35 @@ public class email {
 
     public void setMessage(Message message) {
         this.message = message;
+    }
+
+    public String getMessageBody() {
+        String body = "";
+        try {
+            Object content = message.getContent();
+            if (content instanceof String) {
+                body = (String) content;
+                //System.out.println("CONTENT:" + body);
+                return body;
+
+            } else if (content instanceof Multipart) {
+                Multipart mp = (Multipart) content;
+                BodyPart bp = mp.getBodyPart(0);
+                //System.out.println("CONTENT:" + bp.getContent());
+                body = bp.getContent().toString();
+                return body;
+            }
+        } catch (Exception mex) {
+            mex.printStackTrace();
+        }
+        return body;
+    }
+
+    public String getAddressString() {
+        String address = "";
+
+        address = addressFrom == null ? null : ((InternetAddress) addressFrom).getAddress();
+
+        return address;
     }
 }

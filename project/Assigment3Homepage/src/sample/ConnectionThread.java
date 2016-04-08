@@ -1,5 +1,6 @@
 package sample;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -16,6 +17,7 @@ public class ConnectionThread implements Runnable {
     private ObservableList<email> emails = FXCollections.observableArrayList();
     private Folder emailFolder;
     private Store store;
+
     public ConnectionThread(String username, String password) {
         this.setUsername(username);
         this.setPassword(password);
@@ -41,13 +43,24 @@ public class ConnectionThread implements Runnable {
 //            Platform.runLater(new Runnable() {
 //                @Override
 //                public void run() {
-//                    getUpdate();
+//
 //                }
 //            });
             try {
-                Thread.sleep(10000);
-
+                Thread.sleep(0);
             } catch (InterruptedException ex) {
+                try {
+                    emailFolder.close(false);
+                    store.close();
+                } catch(AuthenticationFailedException e) {
+
+                } catch (NoSuchProviderException e) {
+                    e.printStackTrace();
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
             }
         }
@@ -79,6 +92,11 @@ public class ConnectionThread implements Runnable {
         return body;
     }
 
+    public String getNumberOfMsg() {
+        String label = "Inbox("+Integer.toString(emails.size()) + " messages)";
+        return label;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -96,7 +114,6 @@ public class ConnectionThread implements Runnable {
     }
 
     public ObservableList<String> getAllMail() {
-
         //String host = "smtp.gmail.com";
         String host = "pop.gmail.com";
         Properties props = new Properties();
@@ -121,7 +138,6 @@ public class ConnectionThread implements Runnable {
 
         host = "imap.gmail.com";
 
-
         ObservableList<String> messages2 = FXCollections.observableArrayList();
 
         try {
@@ -138,7 +154,7 @@ public class ConnectionThread implements Runnable {
 
             Message[] messages = emailFolder.getMessages();
 
-            //messages2.add("Inbox (" + messages.length + " messages)");
+//            messages2.add("Inbox (" + messages.length + " messages)");
 
             for (int i = 0, j = messages.length; i < j; i++) {
                 Message message = messages[i];
@@ -168,9 +184,9 @@ public class ConnectionThread implements Runnable {
                     mex.printStackTrace();
                 }
             }
-
             //emailFolder.close(false);
             //store.close();
+        } catch(AuthenticationFailedException e) {
 
         } catch (NoSuchProviderException e) {
             e.printStackTrace();
