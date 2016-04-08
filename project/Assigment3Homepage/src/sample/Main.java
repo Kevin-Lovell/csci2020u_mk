@@ -5,7 +5,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.*;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.geometry.NodeOrientation;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -17,13 +19,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import javafx.geometry.HPos;
-import javafx.geometry.Insets;
 
-import javax.mail.AuthenticationFailedException;
-import javax.mail.NoSuchProviderException;
-import javax.mail.Session;
-import javax.mail.Store;
+import javax.mail.*;
 import java.util.Properties;
 
 public class Main extends Application {
@@ -198,6 +195,7 @@ public class Main extends Application {
 
     public void email(String username, String password, Stage primaryStage){
         Label messageNum = new Label("");
+        messageNum.setTextFill(Color.WHITE);
         messageNum.setTranslateX(85);
         messageNum.setTranslateY(50);
 
@@ -284,28 +282,27 @@ public class Main extends Application {
 
         newLabel.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override public void handle(MouseEvent e) {
-                emailPage(username, password, primaryStage);
+                emailPage(username, password, primaryStage,  "", "");
                 stage.close();
             }
         });
 
         replyLabel.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override public void handle(MouseEvent e) {
-                Thread t1 = new Thread(new Runnable() {
-                    public void run() {
-                        System.out.println(emails.get(index).getMessageBody());
-                        System.out.println(emails.get(index).getAddressString());
-                        System.out.println(emails.get(index).getDate());
-                        System.out.println(emails.get(index).getSubject());
-                    }
-                });
-                t1.start();
+                String to = emails.get(index).getAddressString();
+                String subject = emails.get(index).getSubject();
+                String message = "\n\n\n\n\n----------------------------------------\nRE: " +
+                        emails.get(index).getDate() + ", " + emails.get(index).getAddressFrom()[0] + "\nSubject: " + subject +
+                        "\nMessage: " + emails.get(index).getMessageBody();
+
+                emailPage(username, password, primaryStage, message, to);
             }
         });
 
         deleteLabel.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override public void handle(MouseEvent e) {
-
+                index = list.getSelectionModel().getSelectedIndex();
+                //emails.get(index).setFlag(Flags.Flag.DELETED, true);
             }
         });
 
@@ -361,10 +358,9 @@ public class Main extends Application {
 
         layout.getChildren().add(menuBar);
         layout.getChildren().add(exitBar);
-
     }
 
-    public void emailPage(String username, String password, Stage primaryStage){
+    public void emailPage(String username, String password, Stage primaryStage, String message, String to){
         emailStage.setTitle("ColdMail - Compose Email");
         emailStage.setScene(scene3);
         emailStage.setResizable(false);
@@ -384,8 +380,6 @@ public class Main extends Application {
         ImageView bannerImage = new ImageView();
         bannerImage.setY(345);
         bannerImage.setImage(bottomBanner);
-
-
 
         Rectangle emailBorder = new Rectangle();
         emailBorder.setFill(Color.LIGHTGRAY);
@@ -409,6 +403,7 @@ public class Main extends Application {
 
 
         TextField toField = new TextField();
+        toField.setText(to);
         toField.setPrefWidth(1050);
         toField.setTranslateX(150);
         toField.setTranslateY(70);
@@ -430,6 +425,7 @@ public class Main extends Application {
         messageLabel.setTranslateY(152);
 
         TextArea messageField = new TextArea();
+        messageField.setText(message);
         messageField.setPrefWidth(1050);
         messageField.setPrefHeight(400);
         messageField.setWrapText(true);
@@ -534,6 +530,15 @@ public class Main extends Application {
         Button send = new Button("Send");
         send.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent ee) {
+
+                Thread t1 = new Thread(new Runnable() {
+                    public void run() {
+                        connectionThread.sendMail(toField.getText(), subjectField.getText(), messageField.getText());
+                    }
+                });
+                t1.start();
+
+
 //                try {
 //                    Message message = new MimeMessage(session);
 //                    message.setFrom(new InternetAddress(username));

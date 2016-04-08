@@ -70,6 +70,7 @@ public class ConnectionThread implements Runnable {
     }
 
     public void sendMail(String Address, String Subject, String Body) {
+        System.out.println(Address + Subject + Body);
 
     }
 
