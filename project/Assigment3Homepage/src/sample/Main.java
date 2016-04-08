@@ -34,7 +34,6 @@ public class Main extends Application {
 
     Group root = new Group();
     Scene scene = new Scene(root, 1280, 720, Color.web("#1F4060"));
-    GridPane gridPane = new GridPane();
 
     Stage stage = new Stage();
     Group layout = new Group();
@@ -76,8 +75,9 @@ public class Main extends Application {
     }
 
     public void OpenHomepage(Stage primaryStage){
+        GridPane gridPane = new GridPane();
         // gridPane.setGridLinesVisible(true);
-        gridPane.setPadding(new Insets(400, 0, 0, 400));
+        gridPane.setPadding(new Insets(400, 0, 0, 450));
         gridPane.setVgap(10);
         gridPane.setHgap(10);
 
@@ -117,8 +117,8 @@ public class Main extends Application {
 
         final ComboBox emailDropdown = new ComboBox(emailDomain);
         emailDropdown.setValue("GMail");
-        emailDropdown.setMaxWidth(150);
-        gridPane.add(emailDropdown,3,1);
+        emailDropdown.setMaxWidth(300);
+        gridPane.add(emailDropdown,2,3);
 
         Label passLabel = new Label("Password");
         gridPane.add(passLabel, 1, 2);
@@ -165,12 +165,14 @@ public class Main extends Application {
                         //final String username = "csci2020utest@gmail.com";
                         //final String password = "thisclassisgood";
                         primaryStage.close();
-                        email(username, password);
+                        email(username, password, primaryStage);
                     }
                 }
             }
         });
-        gridPane.add(Login, 2, 3);
+        Login.setTranslateX(115);
+        Login.setMaxWidth(70);
+        gridPane.add(Login, 2, 4);
 
 
         root.getChildren().add(border);
@@ -194,7 +196,7 @@ public class Main extends Application {
         }
     }
 
-    public void email(String username, String password){
+    public void email(String username, String password, Stage primaryStage){
         Label messageNum = new Label("");
         messageNum.setTranslateX(85);
         messageNum.setTranslateY(50);
@@ -278,10 +280,11 @@ public class Main extends Application {
         Label replyLabel = new Label("    Reply    ");
         Label deleteLabel = new Label("    Delete    ");
         Label exitLabel = new Label("    Exit    ");
+        Label logOutLabel = new Label("   LogOut   ");
 
         newLabel.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override public void handle(MouseEvent e) {
-                emailPage(username, password);
+                emailPage(username, password, primaryStage);
                 stage.close();
             }
         });
@@ -314,6 +317,15 @@ public class Main extends Application {
             }
         });
 
+        logOutLabel.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override public void handle(MouseEvent e) {
+                cT.interrupt();
+                OpenHomepage(primaryStage);
+                stage.close();
+
+            }
+        });
+
 
         Menu newMenu = new Menu();
         newMenu.setGraphic(newLabel);
@@ -323,6 +335,9 @@ public class Main extends Application {
         deleteMenu.setGraphic(deleteLabel);
         Menu exitMenu = new Menu();
         exitMenu.setGraphic(exitLabel);
+        Menu logOutMenu = new Menu();
+        logOutMenu.setGraphic(logOutLabel);
+
 
 
         //layout.getChildren().add(envelopeImage);
@@ -333,17 +348,23 @@ public class Main extends Application {
         layout.getChildren().add(emailBorder);
         layout.getChildren().add(emailWindow);
         MenuBar menuBar = new MenuBar();
-        menuBar.setTranslateX(160);
+        menuBar.setTranslateX(200);
+        MenuBar exitBar = new MenuBar();
+        exitBar.setTranslateX(880);
+
         menuBar.getMenus().add(newMenu);
         menuBar.getMenus().add(replyMenu);
         menuBar.getMenus().add(deleteMenu);
-        menuBar.getMenus().add(exitMenu);
-        // borderPane.setTop(menuBar);
+
+        exitBar.getMenus().add(exitMenu);
+        exitBar.getMenus().add(logOutMenu);
+
         layout.getChildren().add(menuBar);
+        layout.getChildren().add(exitBar);
 
     }
 
-    public void emailPage(String username, String password){
+    public void emailPage(String username, String password, Stage primaryStage){
         emailStage.setTitle("ColdMail - Compose Email");
         emailStage.setScene(scene3);
         emailStage.setResizable(false);
@@ -420,7 +441,7 @@ public class Main extends Application {
         back.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 emailStage.close();
-                email(username, password);
+                email(username, password, primaryStage);
             }
         });
         back.setTranslateX(1205);
