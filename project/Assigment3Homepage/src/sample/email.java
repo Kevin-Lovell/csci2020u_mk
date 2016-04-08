@@ -14,10 +14,10 @@ import java.util.Objects;
 public class email {
     private String subject;
     private Date date;
-    private Address addressFrom;
+    private Address[] addressFrom;
     private Message message;
 
-    public email(Date date, Address address, String subject, Message message) {
+    public email(Date date, Address[] address, String subject, Message message) {
         this.setAddressFrom(address);
         this.setDate(date);
         this.setMessage(message);
@@ -40,9 +40,9 @@ public class email {
         this.date = date;
     }
 
-    public Address getAddressFrom() { return addressFrom; }
+    public Address[] getAddressFrom() { return addressFrom; }
 
-    public void setAddressFrom(Address addressFrom) {
+    public void setAddressFrom(Address[] addressFrom) {
         this.addressFrom = addressFrom;
     }
 
@@ -78,8 +78,8 @@ public class email {
 
     public String getAddressString() {
         String address = "";
-
-        address = addressFrom == null ? null : ((InternetAddress) addressFrom).getAddress();
+        Address address1 = addressFrom[0];
+        address = address1 == null ? null : ((InternetAddress) address1).getAddress();
 
         return address;
     }

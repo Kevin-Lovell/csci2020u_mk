@@ -14,7 +14,7 @@ public class ConnectionThread implements Runnable {
     public ConnectionThread(String username, String password, String client) {
         this.setUsername(username);
         this.setPassword(password);
-        this.setClient(client);
+        this.host = client;
     }
 
     public void setClient(String client) {
@@ -65,6 +65,14 @@ public class ConnectionThread implements Runnable {
         return emails;
     }
 
+    public void deleteMail(int index) {
+
+    }
+
+    public void sendMail(String Address, String Subject, String Body) {
+
+    }
+
     public String mailBody(int index) {
         String body = "";
         try {
@@ -111,7 +119,7 @@ public class ConnectionThread implements Runnable {
     public ObservableList<String> getAllMail() {
         Properties props = new Properties();
         props.setProperty("mail.store.protocol", "imaps");
-        host = "imap.gmail.com";
+        //host = "imap.gmail.com";
 
         ObservableList<String> messages2 = FXCollections.observableArrayList();
 
@@ -128,7 +136,8 @@ public class ConnectionThread implements Runnable {
 
             store.connect(host, username, password);
 
-            emailFolder = store.getFolder("INBOX");
+            emailFolder = store.getFolder("Inbox");
+            System.out.println(store.getDefaultFolder().getURLName().toString());
             emailFolder.open(Folder.READ_ONLY);
             System.out.println(emailFolder.getParent().getURLName().toString());
             System.out.println(emailFolder.getURLName().toString());
@@ -143,8 +152,8 @@ public class ConnectionThread implements Runnable {
 
             for (int i = 0, j = messages.length; i < j; i++) {
                 Message message = messages[i];
-                emails.add(new email(message.getSentDate(), message.getFrom()[0], message.getSubject(), message));
-                messages2.add(String.valueOf(i+1) + ". " + message.getFrom()[0] + ": " + message.getSubject());
+                emails.add(new email(message.getSentDate(), message.getFrom(), message.getSubject(), message));
+                messages2.add(String.valueOf(i+1) + ". " + message.getFrom() + ": " + message.getSubject());
 //                System.out.println("Text: " + message.getContent().toString());
             }
             //emailFolder.close(false);

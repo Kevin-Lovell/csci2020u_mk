@@ -45,7 +45,7 @@ public class Main extends Application {
     Stage emailStage = new Stage();
     Group emailLayout = new Group();
     Scene scene3 = new  Scene(emailLayout, 1280, 720, Color.web("#1F4060"));
-
+    private String host;
     private ConnectionThread connectionThread = null;
     private ObservableList<email> emails = FXCollections.observableArrayList();
     ListView<String> list = new ListView<String>();
@@ -119,27 +119,31 @@ public class Main extends Application {
         emailDropdown.setValue("GMail");
         emailDropdown.setMaxWidth(150);
         gridPane.add(emailDropdown,3,1);
+
         Label passLabel = new Label("Password");
         gridPane.add(passLabel, 1, 2);
         TextField passField = new PasswordField();
         passField.setPromptText("");
         GridPane.setHalignment(passField, HPos.LEFT);
         gridPane.add(passField, 2, 2);
+
         userField.setText("csci2020utest2@gmail.com");
         passField.setText("thisclassisgood");
+
         Button Login = new Button("Login");
         Login.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 final String username = userField.getText();
                 final String password = passField.getText();
-
+                final String client = emailDropdown.getValue().toString();
+                getHost(client);
                 if(userField.getText().isEmpty() || passField.getText().isEmpty()) {
                     alertBox("Missing Credentials","Error");
                 } else {
                     boolean failed = true;
                     Properties props = new Properties();
                     props.setProperty("mail.store.protocol", "imaps");
-                    String host = "imap.gmail.com";
+
                     try {
                         Session session = Session.getInstance(props, null);
                         store = session.getStore();
@@ -152,15 +156,16 @@ public class Main extends Application {
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
+                    System.out.println(host);
                     if(!failed) {
                         alertBox("Login Failed","Error");
                     } else {
-                        String client = emailDropdown.getValue().toString();
-                        System.out.println(client);
+                        //String client = emailDropdown.getValue().toString();
+                        System.out.println(host);
                         //final String username = "csci2020utest@gmail.com";
                         //final String password = "thisclassisgood";
                         primaryStage.close();
-                        email(username, password, client);
+                        email(username, password);
                     }
                 }
             }
@@ -177,12 +182,24 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    public void email(String username, String password, String client){
+    public void getHost(String client) {
+        if(client == "GMail") {
+            this.host = "imap.gmail.com";
+        } else if(client == "Windows Live Hotmail" || client == "Outlook") {
+            this.host = "imap-mail.outlook.com";
+        } else if(client == "Yahoo! Mail") {
+            this.host = "imap.mail.yahoo.com";
+        } else if(client == "Rogers") {
+            this.host = "imap.mail.yahoo.com";
+        }
+    }
+
+    public void email(String username, String password){
         Label messageNum = new Label("");
         messageNum.setTranslateX(85);
         messageNum.setTranslateY(50);
 
-        connectionThread = new ConnectionThread(username,password, client);
+        connectionThread = new ConnectionThread(username, password, host);
         Thread cT = new Thread(connectionThread);
         cT.start();
 
@@ -236,7 +253,6 @@ public class Main extends Application {
             }
         });
 
-        System.out.println(index);
         Rectangle listBorder = new Rectangle();
         listBorder.setFill(Color.LIGHTGRAY);
         listBorder.setX(85);
@@ -265,7 +281,7 @@ public class Main extends Application {
 
         newLabel.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override public void handle(MouseEvent e) {
-                emailPage(username, password, client);
+                emailPage(username, password);
                 stage.close();
             }
         });
@@ -327,7 +343,7 @@ public class Main extends Application {
 
     }
 
-    public void emailPage(String username, String password, String client){
+    public void emailPage(String username, String password){
         emailStage.setTitle("ColdMail - Compose Email");
         emailStage.setScene(scene3);
         emailStage.setResizable(false);
@@ -404,7 +420,7 @@ public class Main extends Application {
         back.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 emailStage.close();
-                email(username, password, client);
+                email(username, password);
             }
         });
         back.setTranslateX(1205);
