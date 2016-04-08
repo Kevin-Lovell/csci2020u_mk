@@ -70,6 +70,7 @@ public class ConnectionThread implements Runnable {
     }
 
     public void sendMail(String Address, String Subject, String Body) {
+        System.out.println(Address + Subject + Body);
 
     }
 
@@ -153,7 +154,7 @@ public class ConnectionThread implements Runnable {
             for (int i = 0, j = messages.length; i < j; i++) {
                 Message message = messages[i];
                 emails.add(new email(message.getSentDate(), message.getFrom(), message.getSubject(), message));
-                messages2.add(String.valueOf(i+1) + ". " + message.getFrom() + ": " + message.getSubject());
+                messages2.add(String.valueOf(i+1) + ". " + message.getFrom()[0] + ": " + message.getSubject());
 //                System.out.println("Text: " + message.getContent().toString());
             }
             //emailFolder.close(false);
