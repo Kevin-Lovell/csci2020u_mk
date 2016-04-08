@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -40,10 +41,12 @@ public class Main extends Application {
     Scene scene2 = new Scene(layout, 1280, 720);
     private ConnectionThread connectionThread = null;
 
+    ListView<String> list = new ListView<String>();
+    TextArea emailWindow = new TextArea();
+
     @Override
     public void start(Stage primaryStage) {
         OpenHomepage(primaryStage);
-
     }
 
     public void OpenHomepage(Stage primaryStage){
@@ -94,7 +97,7 @@ public class Main extends Application {
                 primaryStage.close();
                 final String username = userField.getText();
                 final String password = passField.getText();
-                email(stage, username, password);
+                email(stage, "csci2020utest2@gmail.com", "thisclassisgood");
 
             }
         });
@@ -126,6 +129,16 @@ public class Main extends Application {
         list.setTranslateX(35);
         list.setTranslateY(150);
 
+        list.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                int index = list.getSelectionModel().getSelectedIndex();
+                System.out.println("selected " + index);
+
+                emailWindow.setText(messageContent.get(index));
+            }
+        });
+
         Image bottomBanner = new Image("coldMail3.png");
         ImageView bannerImage = new ImageView();
         bannerImage.setY(345);
@@ -140,7 +153,8 @@ public class Main extends Application {
 //        envelopeImage.setImage(envelope);
 //
         GridPane composeSection = new GridPane();
-//        /composeSection.setGridLinesVisible(true);
+
+        // composeSection.setGridLinesVisible(true);
         composeSection.setPadding(new Insets(50, 0, 0, 700));
         composeSection.setVgap(10);
         composeSection.setHgap(10);
@@ -178,8 +192,6 @@ public class Main extends Application {
         messageField.setPrefColumnCount(33);
         messageField.setWrapText(true);
         composeSection.add(messageField, 2, 3);
-
-
 
         Button delete = new Button("Delete");
         delete.setOnAction(new EventHandler<ActionEvent>() {
@@ -252,17 +264,23 @@ public class Main extends Application {
        // layout.getChildren().add(envelopeImage);
         layout.getChildren().add(bannerImage);
         layout.getChildren().add(list);
-        layout.getChildren().add(composeBorder);
-        layout.getChildren().add(composeSection);
+        //layout.getChildren().add(composeBorder);
+        //layout.getChildren().add(composeSection);
         layout.getChildren().add(delete);
         layout.getChildren().add(view);
         layout.getChildren().add(reply);
-        layout.getChildren().add(send);
+        //layout.getChildren().add(send);
         layout.getChildren().add(number);
+        layout.getChildren().add(emailWindow);
+
+        stage.setScene(scene2);
+        stage.show();
     }
 
 
 }
+
+
 
 
 
