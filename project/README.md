@@ -21,6 +21,6 @@ Extras:<br />
 -Clean and easy to use interface with JavaFX's UI tools<br />
 -Implemented with the JavaMail and JavaBeans Activation Framework APIs<br />
 
-Works Cited:>br />
+Works Cited:<br />
 "JavaMail API - Overview." Tutorialspoint.com. Web. <br />
 "JavaMail API Documentation." Javamail.java.net. Web. <br />
