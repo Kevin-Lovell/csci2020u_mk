@@ -1,9 +1,7 @@
 #Steps to download and run Final Project: Cold Mail
 
 Clone this repository and pull from Github
-
 Open the csci2020u_mk/project/Assignment3Homepage folder in Intellij
-
 Run 'Main" class
 
 The program will run from there
