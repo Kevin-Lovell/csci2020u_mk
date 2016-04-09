@@ -1,7 +1,8 @@
 #Steps to download and run Final Project: Cold Mail
-
 Clone this repository and pull from Github
+
 Open the csci2020u_mk/project/Assignment3Homepage folder in Intellij
+
 Run 'Main" class
 
 The program will run from there
@@ -9,6 +10,7 @@ The program will run from there
 Cold Mail is an Email client application which utitlizes the JavaMail api.
 
 It allows the user to:
+
 -Log into a pre-existing email by entering their username and password
 
 -Choose between GMail, Windows Live Hotmail, Outlook, Rogers and Yahoo Mail services
