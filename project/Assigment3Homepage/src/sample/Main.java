@@ -167,9 +167,19 @@ public class Main extends Application {
                 }
             }
         });
-        Login.setTranslateX(115);
+        Login.setTranslateX(70);
         Login.setMaxWidth(70);
         gridPane.add(Login, 2, 4);
+
+        Button Close = new Button("Close");
+        Close.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+        Close.setTranslateX(150);
+        Close.setMaxWidth(70);
+        gridPane.add(Close, 2, 4);
 
 
         root.getChildren().add(border);
@@ -196,8 +206,12 @@ public class Main extends Application {
     public void email(String username, String password, Stage primaryStage){
         Label messageNum = new Label("");
         messageNum.setTextFill(Color.WHITE);
-        messageNum.setTranslateX(85);
+        messageNum.setTranslateX(50);
         messageNum.setTranslateY(50);
+        Label messagesLabel = new Label("Message");
+        messagesLabel.setTextFill(Color.WHITE);
+        messagesLabel.setTranslateX(720);
+        messagesLabel.setTranslateY(50);
 
         connectionThread = new ConnectionThread(username, password, host);
         Thread cT = new Thread(connectionThread);
@@ -225,9 +239,9 @@ public class Main extends Application {
 
         ListView<String> list = new ListView<String>();
         list.setItems(connectionThread.getAllMail());
-        list.setPrefWidth(550);
+        list.setPrefWidth(580);
         list.setPrefHeight(615);
-        list.setTranslateX(80);
+        list.setTranslateX(30);
         list.setTranslateY(75);
 
         Thread t1 = new Thread(new Runnable() {
@@ -255,9 +269,9 @@ public class Main extends Application {
 
         Rectangle listBorder = new Rectangle();
         listBorder.setFill(Color.LIGHTGRAY);
-        listBorder.setX(85);
+        listBorder.setX(35);
         listBorder.setY(70);
-        listBorder.setWidth(550);
+        listBorder.setWidth(580);
         listBorder.setHeight(615);
         listBorder.setArcWidth(10);
         listBorder.setArcHeight(10);
@@ -339,15 +353,16 @@ public class Main extends Application {
 
         //layout.getChildren().add(envelopeImage);
         layout.getChildren().add(messageNum);
+        layout.getChildren().add(messagesLabel);
         layout.getChildren().add(bannerImage);
         layout.getChildren().add(listBorder);
         layout.getChildren().add(list);
         layout.getChildren().add(emailBorder);
         layout.getChildren().add(emailWindow);
         MenuBar menuBar = new MenuBar();
-        menuBar.setTranslateX(200);
+        menuBar.setTranslateX(30);
         MenuBar exitBar = new MenuBar();
-        exitBar.setTranslateX(880);
+        exitBar.setTranslateX(1063);
 
         menuBar.getMenus().add(newMenu);
         menuBar.getMenus().add(replyMenu);
@@ -375,6 +390,7 @@ public class Main extends Application {
         Label normalLabel = new Label("N");
         Label alignLeftLabel = new Label("Align Left");
         Label alignRightLabel= new Label("Align Right");
+        Label backLabel = new Label("   Back   ");
 
         Image bottomBanner = new Image("coldMail3.png");
         ImageView bannerImage = new ImageView();
@@ -433,17 +449,6 @@ public class Main extends Application {
         messageField.setTranslateY(150);
         //composeSection.add(messageField, 2, 3);
 
-        Button back = new Button("Back");
-        back.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
-                emailStage.close();
-                email(username, password, primaryStage);
-            }
-        });
-        back.setTranslateX(1205);
-        back.setTranslateY(0);
-        back.setPrefWidth(75);
-        back.setPrefHeight(25);
 
         Menu fontMenu = new Menu();
         fontMenu.setGraphic(fontLabel);
@@ -492,6 +497,8 @@ public class Main extends Application {
 
         Menu alignRightMenu = new Menu();
         alignRightMenu.setGraphic(alignRightLabel);
+        Menu backMenu = new Menu();
+        backMenu.setGraphic(backLabel);
 
 
 
@@ -524,6 +531,13 @@ public class Main extends Application {
         alignRightLabel.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override public void handle(MouseEvent e) {
                 messageField.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+            }
+        });
+
+        backLabel.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override public void handle(MouseEvent e) {
+                emailStage.close();
+                email(username, password, primaryStage);
             }
         });
 
@@ -585,7 +599,6 @@ public class Main extends Application {
 
 
         MenuBar OptionsMenu = new MenuBar();
-        //OptionsMenu.getMenus().add(fontMenu);
         OptionsMenu.getMenus().add(fontSizeMenu);
         OptionsMenu.getMenus().add(boldMenu);
         OptionsMenu.getMenus().add(italicsMenu);
@@ -593,8 +606,13 @@ public class Main extends Application {
         OptionsMenu.getMenus().add(alignLeftMenu);
         OptionsMenu.getMenus().add(alignRightMenu);
 
+        MenuBar backMenuBar = new MenuBar();
+        backMenuBar.setTranslateX(1187);
+        backMenuBar.getMenus().add(backMenu);
+
 
         emailLayout.getChildren().add(OptionsMenu);
+        emailLayout.getChildren().add(backMenuBar);
         emailLayout.getChildren().add(emailBorder);
         emailLayout.getChildren().add(messageLabel);
         emailLayout.getChildren().add(toLabel);
@@ -603,11 +621,8 @@ public class Main extends Application {
         emailLayout.getChildren().add(subjectField);
         emailLayout.getChildren().add(messageField);
         emailLayout.getChildren().add(bannerImage);
-        emailLayout.getChildren().add(back);
         emailLayout.getChildren().add(send);
         emailLayout.getChildren().add(discard);
-
-
 
     }
 
